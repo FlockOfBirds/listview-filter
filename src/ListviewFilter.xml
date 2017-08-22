@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.ListviewFilter.ListviewFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Listview filter</name>
+    <description>Filter Mendix List views, Template Grids and Data Grids using a drop down with multiple attributes</description>
+    <icon/>
+    <properties/>
+</widget>
