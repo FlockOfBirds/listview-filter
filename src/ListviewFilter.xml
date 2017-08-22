@@ -1,7 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <widget id="com.mendix.widget.custom.ListviewFilter.ListviewFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Listview filter</name>
-    <description>Filter Mendix List views, Template Grids and Data Grids using a drop down with multiple attributes</description>
+    <description>Search Mendix List views, Template Grids and Data Grids using a single-field search</description>
     <icon/>
-    <properties/>
+    <properties>
+        <property key="targetGridName" type="string" required="false">
+            <caption>List view name</caption>
+            <category>Data source</category>
+            <description>Optional, if not specified the closest list view is used</description>
+        </property>
+        <property key="searchMethod" type="enumeration" defaultValue="contains">
+            <caption>Filter method</caption>
+            <category>Data source</category>
+            <description>Contains as default and first option</description>
+            <enumerationValues>
+                <enumerationValue key="equals">Equals</enumerationValue>
+                <enumerationValue key="contains">Contains</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="searchEntity" type="string" required="false">
+            <caption>List view entity</caption>
+            <category>Data source</category>
+            <description>Full name of the entity "module.entity". This entity should match the list view entity</description>
+        </property>
+        <property key="searchAttributes" type="object" isList="true" required="false">
+            <caption>Search attributes</caption>
+            <category>Data source</category>
+            <description>The search attributes on the search entity</description>
+            <properties>
+                <property key="name" type="string" required="false">
+                    <caption>Attribute name</caption>
+                    <category>Attribute</category>
+                    <description>Attribute on the list view datasource entity or list view search entity</description>
+                </property>
+            </properties>
+        </property>
+        <property key="defaultQuery" type="translatableString" required="false">
+            <caption>Default query</caption>
+            <category>Data source</category>
+            <description>The default query that is used to filter the list</description>
+        </property>
+        <property key="showSearchBar" type="boolean" defaultValue="true">
+            <caption>Show search bar</caption>
+            <category>Appearance</category>
+            <description> It controls if the search bar should be visible or not</description>
+        </property>
+        <property key="placeHolder" type="translatableString" required="false">
+            <caption>Placeholder</caption>
+            <category>Appearance</category>
+            <description>Specifies a short hint that describes the expected value of the search input field</description>
+            <translations>
+                <translation lang="en_US">Filter</translation>
+                <translation lang="nl_NL">Filter</translation>
+            </translations>
+        </property>
+    </properties>
 </widget>
