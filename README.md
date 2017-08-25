@@ -1,4 +1,4 @@
-# Listview filter
+# Dropdown filter
 
 ## Features
 

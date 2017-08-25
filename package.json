@@ -1,6 +1,6 @@
 {
-  "name": "listview-filter",
-  "widgetName": "ListviewFilter",
+  "name": "dropdown-filter",
+  "widgetName": "DropdownFilter",
   "version": "1.0.0",
   "description": "Filter Mendix List views using a drop down",
   "copyright": "Mendix BV",

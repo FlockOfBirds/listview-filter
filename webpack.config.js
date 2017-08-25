@@ -6,7 +6,7 @@ const package = require("./package");
 const widgetName = package.widgetName;
 
 const widgetConfig = {
-    entry: `./src/components/${widgetName}.ts`,
+    entry: `./src/components/${widgetName}Container.ts`,
     output: {
         path: path.resolve(__dirname, "dist/tmp"),
         filename: `src/com/mendix/widget/custom/${widgetName}/${widgetName}.js`,
