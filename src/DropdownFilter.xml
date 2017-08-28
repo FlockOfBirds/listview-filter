@@ -7,21 +7,18 @@
         <property key="options" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Data source</category>
-            <description>Filter options</description>
+            <description>The search attributes on the filter entity</description>
             <properties>
-            <property key="filterEntity" type="entity" required="false">
-                <caption>Entity (path)</caption>
-                <category>Attribute</category>
-                <description/>
-            </property>
-            <property key="name" type="attribute" entityProperty="filterEntity" required="false">
-                <caption>Attribute name</caption>
-                <category>Attribute</category>
-                <description>Attribute on the list view datasource entity or list view search entity</description>
-            <attributeTypes>
-                <attributeType name="String"/>
-            </attributeTypes>
-            </property>
+                <property key="filterAttributeOption" type="string" required="false">
+                    <caption>Attribute name</caption>
+                    <category>Attribute</category>
+                    <description>Attribute on the list view datasource entity or list view filter entity</description>
+                </property>
+                <property key="listFilterValue" type="string" required="false">
+                    <caption>Filter value</caption>
+                    <category>Attribute</category>
+                    <description/>
+                </property>
             </properties>
         </property>
         <property key="caption" type="string" required="false">

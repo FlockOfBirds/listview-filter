@@ -1,0 +1,13 @@
+.dropdown-display {
+    float:right;
+    width:150px;
+    height:30px;
+    cursor:pointer;
+    border:solid 2px #DDD;
+}
+
+.caption-display {
+    font-family: -webkit-pictograph;
+    font-size: 19px;
+    height:30px;
+}

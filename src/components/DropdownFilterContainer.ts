@@ -6,14 +6,14 @@ import { DropdownFilter } from "./DropdownFilter";
 import { ValidateConfigs } from "./ValidateConfigs";
 
 export interface DropdownFilterContainerProps {
-    options: object;
     filterEntity: string;
-    name: string;
     caption: string;
     filterSourceType: filterSourceTypeOptions;
     searchAttribute: string;
     filterValue: string;
     entityConstraint: string;
+    filterListValue: string;
+    options: Array<{ filterAttributeOption: string }>;
     searchMethod: SearchMethodOptions;
     showEmptyOption: boolean;
     targetGridName: string;
@@ -58,6 +58,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         return createElement(DropdownFilter, {
             caption: this.props.caption,
             getFilterValue: this.updateConstraints,
+            options: this.props.options,
             value: this.props.filterValue
         });
     }

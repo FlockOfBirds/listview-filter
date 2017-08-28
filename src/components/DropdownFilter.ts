@@ -1,9 +1,13 @@
 import { Component, createElement } from "react";
+import * as classNames from "classNames";
+
+import "../ui/DropdownFilter.css";
 
 interface DropdownFilterProps {
     caption: string;
     value: string;
     getFilterValue?: (query: string) => void;
+    options: Array<{ filterAttributeOption: string }>;
 }
 
 interface DropdownFilterState {
@@ -20,11 +24,11 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     render() {
-        return createElement("div", { className: "btn-group" },
-            createElement("button", { className: "btn" }, this.props.caption),
-            createElement("button", { className: "btn dropdown-toggle", dataToggle: "dropdown" },
-                createElement("span", { className: "caret" })),
-            createElement("ul", { className: "dropdown-menu" }));
+        return (
+            createElement("label", { className: classNames("caption-display") }, this.props.caption + ": ",
+                createElement("select", { className: classNames("dropdown-display") }, this.props.options,
+                    createElement("option", {}, this.props.options)))
+        );
     }
 
     componentDidMount() {
