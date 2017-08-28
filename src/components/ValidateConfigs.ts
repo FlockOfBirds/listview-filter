@@ -1,9 +1,8 @@
-import { Component, createElement } from "react";
+import { Component } from "react";
 
-import { Alert } from "./Alert";
-import { ListView, ListviewFilterProps } from "../utils/ContainerUtils";
+import { DropdownFilterContainerProps, ListView } from "../components/DropdownFilterContainer";
 
-export interface ValidateConfigProps extends ListviewFilterProps {
+export interface ValidateConfigProps extends DropdownFilterContainerProps {
     inWebModeler?: boolean;
     queryNode?: HTMLElement;
     targetGrid?: ListView;
@@ -11,16 +10,9 @@ export interface ValidateConfigProps extends ListviewFilterProps {
     validate: boolean;
 }
 
-const widgetName = "listview filter widget";
+const widgetName = "dropdown filter widget";
 
 export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
-    render() {
-        return createElement(Alert, {
-            bootstrapStyle: "danger",
-            className: "widget-listview-filter-alert",
-            message: this.props.validate ? ValidateConfigs.validate(this.props) : ""
-        });
-    }
 
     static validate(props: ValidateConfigProps): string {
         if (!props.queryNode) {
@@ -33,23 +25,23 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
             return `${widgetName}: supplied target name "${props.targetGridName}" is not of the type list view`;
         }
         if (!ValidateConfigs.isCompatible(props.targetGrid)) {
-            return `${widgetName}: this Mendix version is incompatible with the listview filter widget`;
+            return `${widgetName}: this Mendix version is incompatible with the offline search widget`;
         }
-        if (!props.searchEntity && !ValidateConfigs.isValidAttribute(props.targetGrid._datasource._entity, props)) {
-            return `${widgetName}: supplied attribute name "${props.searchAttributes}" does not belong to list view`;
+        if (!props.filterEntity && !ValidateConfigs.isValidAttribute(props.targetGrid._datasource._entity, props)) {
+            return `${widgetName}: supplied attribute name "${props.searchAttribute}" does not belong to list view`;
         }
-        if (props.searchEntity && !ValidateConfigs.itContains(props.searchEntity, "/")) {
-            if (props.searchEntity !== props.targetGrid._datasource._entity) {
-                return `${widgetName}: supplied entity "${props.searchEntity}" does not belong to list view data source`;
+        if (props.filterEntity && !ValidateConfigs.itContains(props.filterEntity, "/")) {
+            if (props.filterEntity !== props.targetGrid._datasource._entity) {
+                return `${widgetName}: supplied entity "${props.filterEntity}" does not belong to list view data source`;
             }
         }
-        if (props.searchEntity && ValidateConfigs.itContains(props.searchEntity, "/") && !ValidateConfigs.getRelatedEntity(props)) {
-            return `${widgetName}: supplied entity "${props.searchEntity}" does not belong to list view data source reference`;
+        if (props.filterEntity && ValidateConfigs.itContains(props.filterEntity, "/") && !ValidateConfigs.getRelatedEntity(props)) {
+            return `${widgetName}: supplied entity "${props.filterEntity}" does not belong to list view data source reference`;
         }
-        if (props.searchEntity && ValidateConfigs.itContains(props.searchEntity, "/")) {
+        if (props.filterEntity && ValidateConfigs.itContains(props.filterEntity, "/")) {
             const entityPath = ValidateConfigs.getRelatedEntity(props);
-            if (props.searchEntity && !ValidateConfigs.isValidAttribute(entityPath, props)) {
-                return `${widgetName}: supplied attribute name "${props.searchAttributes}" does not belong to list view data source reference`;
+            if (props.filterEntity && !ValidateConfigs.isValidAttribute(entityPath, props)) {
+                return `${widgetName}: supplied attribute name "${props.searchAttribute}" does not belong to list view data source reference`;
             }
         }
 
@@ -61,9 +53,9 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
             const dataSourceEntity = window.mx.meta.getEntity(props.targetGrid._datasource._entity);
             const referenceAttributes: string[] = dataSourceEntity.getReferenceAttributes();
             for (const referenceAttribute of referenceAttributes) {
-                if (ValidateConfigs.itContains(props.searchEntity, referenceAttribute)) {
+                if (ValidateConfigs.itContains(props.filterEntity, referenceAttribute)) {
                     const selectorEntity = dataSourceEntity.getSelectorEntity(referenceAttribute);
-                    if (ValidateConfigs.itContains(props.searchEntity, selectorEntity)) {
+                    if (ValidateConfigs.itContains(props.filterEntity, selectorEntity)) {
                         return selectorEntity;
                     }
                 }
@@ -77,7 +69,7 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
         if (props.targetGrid) {
             const dataSourceEntity: mendix.lib.MxMetaObject = window.mx.meta.getEntity(entity);
             const dataAttributes: string[] = dataSourceEntity.getAttributes();
-            if (ValidateConfigs.itContains(dataAttributes, props.searchAttributes[""])) {
+            if (ValidateConfigs.itContains(dataAttributes, props.searchAttribute)) {
                 return true;
             }
         }
@@ -96,7 +88,7 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
             typeof targetGrid._datasource._setSize !== "undefined");
     }
 
-    static findTargetNode(props: ListviewFilterProps, queryNode: HTMLElement): HTMLElement | null {
+    static findTargetNode(props: DropdownFilterContainerProps, queryNode: HTMLElement): HTMLElement | null {
         let targetNode: HTMLElement | null = null ;
 
         while (!targetNode && queryNode) {
