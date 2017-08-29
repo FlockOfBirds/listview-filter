@@ -1,4 +1,4 @@
-import { Component, createElement } from "react";
+import { Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as dijitRegistry from "dijit/registry";
 
@@ -58,6 +58,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
     render() {
         return createElement(DropdownFilter, {
             caption: this.props.caption,
+            getDropdownOptions: this.createOptions(),
             getFilterValue: this.updateConstraints,
             options: this.props.options,
             value: this.props.filterValue
@@ -99,6 +100,22 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
             },
             xpath
         });
+    }
+
+    private createOptions(): Array<ReactElement<{}>> {
+        const optionElements: Array<ReactElement<{}>> = [];
+        if (this.props.options.length) {
+            this.props.options.map((optionObject) => {
+                const { filterOptionAttribute, filterOptionValue } = optionObject;
+                const optionValue: OptionHTMLAttributes<HTMLOptionElement> = {
+                    className: "",
+                    label: filterOptionValue,
+                    value: filterOptionAttribute
+                };
+                optionElements.push(createElement("option", optionValue));
+            });
+        }
+        return optionElements;
     }
 
     private updateConstraints(query: string) {
