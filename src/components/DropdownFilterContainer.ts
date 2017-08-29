@@ -13,7 +13,7 @@ export interface DropdownFilterContainerProps {
     filterValue: string;
     entityConstraint: string;
     filterListValue: string;
-    options: Array<{ filterAttributeOption: string }>;
+    options: Array<{ filterOptionAttribute: string, filterOptionValue: string}>;
     searchMethod: SearchMethodOptions;
     showEmptyOption: boolean;
     targetGridName: string;
@@ -52,6 +52,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
 
         this.state = { findingWidget: true };
         this.updateConstraints = this.updateConstraints.bind(this);
+        this.fetchFromXpath = this.fetchFromXpath.bind(this);
     }
 
     render() {
@@ -83,6 +84,21 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
             validate: true
         });
         this.setState({ findingWidget: false, validationPassed: !validateMessage });
+    }
+
+    private fetchFromXpath(mxObject: mendix.lib.MxObject) {
+        const xpath = "//" + this.props.filterEntity +
+            this.props.entityConstraint.replace(/\[\%CurrentObject\%\]/gi, mxObject.getGuid());
+        mx.data.get({
+            callback: object => {
+                alert(object);
+            },
+            error: error => window.mx.ui.error(`${error.message}`),
+            filter: {
+                sort: [ this.props.searchAttribute, "asc" ]
+            },
+            xpath
+        });
     }
 
     private updateConstraints(query: string) {
