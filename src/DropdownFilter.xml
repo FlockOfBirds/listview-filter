@@ -9,12 +9,12 @@
             <category>Data source</category>
             <description>The search attributes on the filter entity</description>
             <properties>
-                <property key="filterAttributeOption" type="string" required="false">
+                <property key="filterOptionAttribute" type="string" required="false">
                     <caption>Attribute name</caption>
                     <category>Attribute</category>
                     <description>Attribute on the list view datasource entity or list view filter entity</description>
                 </property>
-                <property key="listFilterValue" type="string" required="false">
+                <property key="filterOptionValue" type="string" required="false">
                     <caption>Filter value</caption>
                     <category>Attribute</category>
                     <description/>
