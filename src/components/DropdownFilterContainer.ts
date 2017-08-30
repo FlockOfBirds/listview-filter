@@ -1,4 +1,4 @@
-import { Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
+import { Component, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as dijitRegistry from "dijit/registry";
 
@@ -13,7 +13,8 @@ export interface DropdownFilterContainerProps {
     filterValue: string;
     entityConstraint: string;
     filterListValue: string;
-    options: Array<{ filterOptionAttribute: string, filterOptionValue: string}>;
+    listView?: ListView;
+    options: Array<{ filterOptionAttribute: string, filterOptionValue: string }>;
     searchMethod: SearchMethodOptions;
     showEmptyOption: boolean;
     targetGridName: string;
@@ -43,7 +44,7 @@ interface DropdownFilterState {
 }
 
 type SearchMethodOptions = "equals" | "contains";
-type filterSourceTypeOptions = "static" | "xpath";
+export type filterSourceTypeOptions = "static" | "XPath";
 
 export default class DropdownFilterContainer extends Component<DropdownFilterContainerProps, DropdownFilterState> {
 
@@ -51,16 +52,17 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         super(props);
 
         this.state = { findingWidget: true };
+        this.handleChange = this.handleChange.bind(this);
         this.updateConstraints = this.updateConstraints.bind(this);
-        this.fetchFromXpath = this.fetchFromXpath.bind(this);
     }
 
     render() {
         return createElement(DropdownFilter, {
             caption: this.props.caption,
-            getDropdownOptions: this.createOptions(),
-            getFilterValue: this.updateConstraints,
+            filterSourceType: this.props.filterSourceType,
+            handleChange: this.props.filterSourceType === "XPath" ? this.handleChange : undefined,
             options: this.props.options,
+            updateConstraints: this.props.filterSourceType === "static" ? this.updateConstraints : undefined,
             value: this.props.filterValue
         });
     }
@@ -87,35 +89,33 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         this.setState({ findingWidget: false, validationPassed: !validateMessage });
     }
 
-    private fetchFromXpath(mxObject: mendix.lib.MxObject) {
-        const xpath = "//" + this.props.filterEntity +
-            this.props.entityConstraint.replace(/\[\%CurrentObject\%\]/gi, mxObject.getGuid());
-        mx.data.get({
-            callback: object => {
-                alert(object);
-            },
-            error: error => window.mx.ui.error(`${error.message}`),
-            filter: {
-                sort: [ this.props.searchAttribute, "asc" ]
-            },
-            xpath
-        });
-    }
+    private handleChange(value: string) {
+        const constraints: HybridConstraint = [];
 
-    private createOptions(): Array<ReactElement<{}>> {
-        const optionElements: Array<ReactElement<{}>> = [];
-        if (this.props.options.length) {
-            this.props.options.map((optionObject) => {
-                const { filterOptionAttribute, filterOptionValue } = optionObject;
-                const optionValue: OptionHTMLAttributes<HTMLOptionElement> = {
-                    className: "",
-                    label: filterOptionValue,
-                    value: filterOptionAttribute
-                };
-                optionElements.push(createElement("option", optionValue));
-            });
+        if (this.state.targetGrid && this.state.targetGrid._datasource) {
+            const datasource = this.state.targetGrid._datasource;
+            if (window.device) {
+                this.props.options.forEach(searchAttribute => {
+                    constraints.push({
+                        attribute: searchAttribute.filterOptionAttribute,
+                        operator: this.props.searchMethod,
+                        path: this.props.filterEntity,
+                        value: searchAttribute.filterOptionValue
+                    });
+                });
+                datasource._constraints = value ? constraints : [];
+            } else {
+                let constraint: HybridConstraint | string = [];
+                this.props.options.forEach(searchAttribute => {
+                    constraint = this.props.filterEntity && ValidateConfigs.itContains(this.props.filterEntity, "/")
+                        ? `${this.props.filterEntity}[${this.props.searchMethod}(${searchAttribute.filterOptionAttribute},'${value}')]`
+                        : `${this.props.searchMethod}(${searchAttribute.filterOptionAttribute},'${value}')`;
+                    datasource._constraints = value ? "[" + constraint + "]" : "";
+                });
+            }
+
+            this.state.targetGrid.update();
         }
-        return optionElements;
     }
 
     private updateConstraints(query: string) {

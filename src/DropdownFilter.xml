@@ -46,7 +46,7 @@
             <description/>
             <enumerationValues>
                 <enumerationValue key="static">Static</enumerationValue>
-                <enumerationValue key="xpath">XPath</enumerationValue>
+                <enumerationValue key="XPath">XPath</enumerationValue>
             </enumerationValues>
         </property>
         <property key="searchAttribute" type="attribute" entityProperty="filterEntity" required="false">
