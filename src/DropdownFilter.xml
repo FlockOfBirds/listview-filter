@@ -4,82 +4,70 @@
     <description>Search Mendix List views, Template Grids and Data Grids using a single-field search</description>
     <icon/>
     <properties>
-        <property key="targetGridName" type="string" required="false">
-            <caption>List view name</caption>
+        <property key="filterEntity" type="entity">
+            <caption>List view entity</caption>
             <category>Data source</category>
-            <description>Optional, if not specified the closest list view is used</description>
+            <description>Full name of the entity "module.entity". This entity should match the list view entity</description>
         </property>
         <property key="options" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Data source</category>
-            <description>The search attributes on the filter entity</description>
+            <description>The filter options</description>
             <properties>
-                <property key="filterOptionAttribute" type="string" required="false">
-                    <caption>Attribute name</caption>
-                    <category>Attribute</category>
+                <property key="caption" type="translatableString" required="false">
+                    <caption>Caption</caption>
+                    <category>General</category>
+                    <description/>
+                    <translations>
+                        <translation lang="en_US">Caption</translation>
+                        <translation lang="nl_NL">Onderschrift</translation>
+                    </translations>
+                </property>
+                <property key="filterSourceType" type="enumeration" defaultValue="static">
+                    <caption>Comparison</caption>
+                    <category>General</category>
+                    <description/>
+                    <enumerationValues>
+                        <enumerationValue key="static">Static</enumerationValue>
+                        <enumerationValue key="xpath">XPath</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="filterOptionAttribute" type="attribute" required="false" entityProperty="../filterEntity">
+                    <caption>Attribute</caption>
+                    <category>General</category>
                     <description>Attribute on the list view datasource entity or list view filter entity</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                        <attributeType name="Integer"/>
+                        <attributeType name="Decimal"/>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
                 </property>
                 <property key="filterOptionValue" type="string" required="false">
-                    <caption>Filter value</caption>
-                    <category>Attribute</category>
+                    <caption>Value</caption>
+                    <category>General</category>
                     <description/>
+                </property>
+                <property key="entityConstraint" type="entityConstraint" required="false" entityProperty="../filterEntity">
+                    <caption>Constraint</caption>
+                    <category>General</category>
+                    <description/>
+                </property>
+                <property key="searchMethod" type="enumeration" defaultValue="contains">
+                    <caption>Filter method</caption>
+                    <category>General</category>
+                    <description>Contains as default and first option</description>
+                    <enumerationValues>
+                        <enumerationValue key="equals">Equals</enumerationValue>
+                        <enumerationValue key="contains">Contains</enumerationValue>
+                    </enumerationValues>
                 </property>
             </properties>
         </property>
-        <property key="caption" type="translatableString" required="false">
-            <caption>Caption</caption>
+        <property key="targetGridName" type="string" required="false">
+            <caption>List view name</caption>
             <category>Data source</category>
-            <description/>
-            <translations>
-                <translation lang="en_US">Caption</translation>
-                <translation lang="nl_NL">Onderschrift</translation>
-            </translations>
-        </property>
-        <property key="filterEntity" type="entity" required="false">
-            <caption>Entity (path)</caption>
-            <category>Data source</category>
-            <description>Full name of the entity "module.entity". This entity should match the list view entity</description>
-        </property>
-        <property key="filterSourceType" type="enumeration" defaultValue="static">
-            <caption>Type</caption>
-            <category>Data source</category>
-            <description/>
-            <enumerationValues>
-                <enumerationValue key="static">Static</enumerationValue>
-                <enumerationValue key="XPath">XPath</enumerationValue>
-            </enumerationValues>
-        </property>
-        <property key="searchAttribute" type="attribute" entityProperty="filterEntity" required="false">
-            <caption>Attribute</caption>
-            <category>Data source</category>
-            <description>The attribute of the list view entity</description>
-            <attributeTypes>
-                <attributeType name="String"/>
-            </attributeTypes>
-        </property>
-        <property key="filterValue" type="string" required="false">
-            <caption>Value</caption>
-            <category>Data source</category>
-            <description/>
-        </property>
-        <property key="entityConstraint" type="entityConstraint" entityProperty="filterEntity" required="false">
-            <caption>XPath constraint</caption>
-            <category>Data source</category>
-            <description/>
-        </property>
-        <property key="searchMethod" type="enumeration" defaultValue="contains">
-            <caption>Filter method</caption>
-            <category>Data source</category>
-            <description>Contains as default and first option</description>
-            <enumerationValues>
-                <enumerationValue key="equals">Equals</enumerationValue>
-                <enumerationValue key="contains">Contains</enumerationValue>
-            </enumerationValues>
-        </property>
-        <property key="showEmptyOption" type="boolean" defaultValue="false">
-            <caption>Show empty option</caption>
-            <category>Data source</category>
-            <description/>
+            <description>Optional, if not specified the closest list view is used</description>
         </property>
     </properties>
 </widget>
