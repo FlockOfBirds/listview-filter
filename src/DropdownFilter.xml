@@ -4,6 +4,11 @@
     <description>Search Mendix List views, Template Grids and Data Grids using a single-field search</description>
     <icon/>
     <properties>
+        <property key="targetGridName" type="string" required="false">
+            <caption>List view name</caption>
+            <category>Data source</category>
+            <description>Optional, if not specified the closest list view is used</description>
+        </property>
         <property key="options" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Data source</category>
@@ -21,10 +26,14 @@
                 </property>
             </properties>
         </property>
-        <property key="caption" type="string" required="false">
+        <property key="caption" type="translatableString" required="false">
             <caption>Caption</caption>
             <category>Data source</category>
             <description/>
+            <translations>
+                <translation lang="en_US">Caption</translation>
+                <translation lang="nl_NL">Onderschrift</translation>
+            </translations>
         </property>
         <property key="filterEntity" type="entity" required="false">
             <caption>Entity (path)</caption>
