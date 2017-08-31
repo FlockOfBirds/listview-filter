@@ -1,10 +1,11 @@
-import { Component } from "react";
+import { Component, createElement } from "react";
 
 import { DropdownFilterContainerProps, ListView } from "../components/DropdownFilterContainer";
+import { Alert } from "../components/Alert";
 
 export interface ValidateConfigProps extends DropdownFilterContainerProps {
     inWebModeler?: boolean;
-    queryNode?: HTMLElement;
+    filterNode?: HTMLElement;
     targetGrid?: ListView;
     targetGridName: string;
     validate: boolean;
@@ -13,9 +14,16 @@ export interface ValidateConfigProps extends DropdownFilterContainerProps {
 const widgetName = "dropdown filter widget";
 
 export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
+    render() {
+        return createElement(Alert, {
+            bootstrapStyle: "danger",
+            className: "widget-dropdown-filter-alert",
+            message: this.props.validate ? ValidateConfigs.validate(this.props) : ""
+        });
+    }
 
     static validate(props: ValidateConfigProps): string {
-        if (!props.queryNode) {
+        if (!props.filterNode) {
             return `${widgetName}: unable to find grid with the name "${props.targetGridName}"`;
         }
         if (props.inWebModeler) {
@@ -27,22 +35,24 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
         if (!ValidateConfigs.isCompatible(props.targetGrid)) {
             return `${widgetName}: this Mendix version is incompatible with the offline search widget`;
         }
-        if (!props.filterEntity && !ValidateConfigs.isValidAttribute(props.targetGrid._datasource._entity, props)) {
-            return `${widgetName}: supplied attribute name "${props.searchAttribute}" does not belong to list view`;
-        }
-        if (props.filterEntity && !ValidateConfigs.itContains(props.filterEntity, "/")) {
-            if (props.filterEntity !== props.targetGrid._datasource._entity) {
-                return `${widgetName}: supplied entity "${props.filterEntity}" does not belong to list view data source`;
+        // if (!props.entity && !ValidateConfigs.isValidAttribute(props.targetGrid._datasource._entity, props)) {
+        //     // return `${widgetName}: supplied attribute name "${props.values.attribute}" does not belong to list view`;
+        //     return `${widgetName}: supplied attribute name does not belong to list view`;
+        // }
+        if (props.entity && !ValidateConfigs.itContains(props.entity, "/")) {
+            if (props.entity !== props.targetGrid._datasource._entity) {
+                return `${widgetName}: supplied entity "${props.entity}" does not belong to list view data source`;
             }
         }
-        if (props.filterEntity && ValidateConfigs.itContains(props.filterEntity, "/") && !ValidateConfigs.getRelatedEntity(props)) {
-            return `${widgetName}: supplied entity "${props.filterEntity}" does not belong to list view data source reference`;
+        if (props.entity && ValidateConfigs.itContains(props.entity, "/") && !ValidateConfigs.getRelatedEntity(props)) {
+            return `${widgetName}: supplied entity "${props.entity}" does not belong to list view data source reference`;
         }
-        if (props.filterEntity && ValidateConfigs.itContains(props.filterEntity, "/")) {
-            const entityPath = ValidateConfigs.getRelatedEntity(props);
-            if (props.filterEntity && !ValidateConfigs.isValidAttribute(entityPath, props)) {
-                return `${widgetName}: supplied attribute name "${props.searchAttribute}" does not belong to list view data source reference`;
-            }
+        if (props.entity && ValidateConfigs.itContains(props.entity, "/")) {
+            // const entityPath = ValidateConfigs.getRelatedEntity(props);
+            // if (props.entity && !ValidateConfigs.isValidAttribute(entityPath, props)) {
+            //     // return `${widgetName}: supplied attribute name "${props.values.attribute}" does not belong to list view data source reference`;
+            //     return `${widgetName}: supplied attribute name does not belong to list view data source reference`;
+            // }
         }
 
         return "";
@@ -53,9 +63,9 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
             const dataSourceEntity = window.mx.meta.getEntity(props.targetGrid._datasource._entity);
             const referenceAttributes: string[] = dataSourceEntity.getReferenceAttributes();
             for (const referenceAttribute of referenceAttributes) {
-                if (ValidateConfigs.itContains(props.filterEntity, referenceAttribute)) {
+                if (ValidateConfigs.itContains(props.entity, referenceAttribute)) {
                     const selectorEntity = dataSourceEntity.getSelectorEntity(referenceAttribute);
-                    if (ValidateConfigs.itContains(props.filterEntity, selectorEntity)) {
+                    if (ValidateConfigs.itContains(props.entity, selectorEntity)) {
                         return selectorEntity;
                     }
                 }
@@ -65,17 +75,17 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
         return "";
     }
 
-    static isValidAttribute(entity: string, props: ValidateConfigProps): boolean {
-        if (props.targetGrid) {
-            const dataSourceEntity: mendix.lib.MxMetaObject = window.mx.meta.getEntity(entity);
-            const dataAttributes: string[] = dataSourceEntity.getAttributes();
-            if (ValidateConfigs.itContains(dataAttributes, props.searchAttribute)) {
-                return true;
-            }
-        }
+    // static isValidAttribute(entity: string, props: ValidateConfigProps): boolean {
+    //     if (props.targetGrid) {
+    //         const dataSourceEntity: mendix.lib.MxMetaObject = window.mx.meta.getEntity(entity);
+    //         const dataAttributes: string[] = dataSourceEntity.getAttributes();
+    //         if (ValidateConfigs.itContains(dataAttributes, props.values.)) {
+    //             return true;
+    //         }
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     static isCompatible(targetGrid: ListView): boolean {
         return !!(targetGrid &&
@@ -88,16 +98,16 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
             typeof targetGrid._datasource._setSize !== "undefined");
     }
 
-    static findTargetNode(props: DropdownFilterContainerProps, queryNode: HTMLElement): HTMLElement | null {
+    static findTargetNode(props: DropdownFilterContainerProps, filterNode: HTMLElement): HTMLElement | null {
         let targetNode: HTMLElement | null = null ;
 
-        while (!targetNode && queryNode) {
+        while (!targetNode && filterNode) {
             targetNode = props.targetGridName
-                ? queryNode.querySelector(`.mx-name-${props.targetGridName}`) as HTMLElement
-                : queryNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
+                ? filterNode.querySelector(`.mx-name-${props.targetGridName}`) as HTMLElement
+                : filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
 
             if (targetNode) break;
-            queryNode = queryNode.parentNode as HTMLElement;
+            filterNode = filterNode.parentNode as HTMLElement;
         }
 
         return targetNode;

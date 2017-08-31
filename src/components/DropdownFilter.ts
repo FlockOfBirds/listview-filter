@@ -1,84 +1,65 @@
-import {
-    ChangeEvent, Component, OptionHTMLAttributes, ReactElement, SelectHTMLAttributes, createElement
-} from "react";
-import * as classNames from "classNames";
+import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
-import { filterSourceTypeOptions } from "./DropdownFilterContainer";
-import "../ui/DropdownFilter.css";
+import { ValueProps, comparisonOptions } from "./DropdownFilterContainer";
 
-interface DropdownFilterProps {
-    caption: string;
-    filterSourceType: filterSourceTypeOptions;
-    handleChange: (value: string) => void;
-    value: string;
-    options: Array<{ filterOptionAttribute: string, filterOptionValue: string }>;
-    updateConstraints: (query: string) => void;
+export interface DropdownFilterProps {
+    handleChange: (value: string, attribute: string, comparison: comparisonOptions, constraint: string, filterMethod: string) => void;
+    values: ValueProps[];
 }
 
 interface DropdownFilterState {
-    query: string;
     value: string;
+    constraint: string;
+    filter: string;
+    comparison: comparisonOptions;
+    attributeName: string;
+}
+
+interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
+    "data-comparison": string;
+    "data-attribute": string;
+    "data-constraint": string;
+    "data-filter": string;
 }
 
 export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilterState> {
-
     constructor(props: DropdownFilterProps) {
         super(props);
 
-        this.state = {
-            query: "",
-            value: ""
-        };
-        this.resetQuery = this.resetQuery.bind(this);
-        this.handleStatic = this.handleStatic.bind(this);
-        this.handleXPath = this.handleXPath.bind(this);
+        this.state = { value: "", constraint: "", comparison: "static", attributeName: "", filter: "" };
+        this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     render() {
-        const selectValue: SelectHTMLAttributes<HTMLSelectElement> = {
-            className: classNames("dropdown-display"),
-            disabled: this.props.filterSourceType === "static" ? true : false,
-            onChange: this.props.filterSourceType === "static" ? this.handleStatic : this.handleXPath
-        };
-        return (
-            createElement("label", { className: classNames("caption-display") }, this.props.caption,
-                createElement("select", selectValue,
-                    this.createOptions(this.props)
-                ))
+        return createElement("div", { className: "form-group" },
+            createElement("select", {
+                className: "form-control",
+                onChange: this.handleOnChange
+            }, this.createOptions())
         );
     }
 
-    componentDidMount() {
-        this.setState({ query: this.props.value });
+    componentDidUpdate(_prevProps: DropdownFilterProps, _prevState: DropdownFilterState) {
+        this.props.handleChange(this.state.value, this.state.attributeName, this.state.comparison, this.state.constraint, this.state.filter);
     }
 
-    componentDidUpdate(_prevProps: DropdownFilterProps, prevState: DropdownFilterState) {
-        if (this.state.query !== prevState.query) {
-            setTimeout(() => {
-                this.props.updateConstraints(this.state.query);
-            });
-        }
-
-        if (this.state.value !== prevState.value) {
-            setTimeout(() => {
-                this.props.handleChange(this.state.value);
-            });
-        }
-    }
-
-    private resetQuery() {
-        this.setState({ query: "", value: "" });
-    }
-
-    private createOptions(props: DropdownFilterProps): Array<ReactElement<{}>> {
+    private createOptions(): Array<ReactElement<{}>> {
         const optionElements: Array<ReactElement<{}>> = [];
-        if (props.options.length) {
-            props.options.map((optionObject) => {
-                const { filterOptionValue } = optionObject;
-                const optionValue: OptionHTMLAttributes<HTMLOptionElement> = {
-                    className: "",
-                    label: filterOptionValue,
-                    value: filterOptionValue
+        optionElements.push(createElement("option", {
+            className: "",
+            label: "",
+            value: "(empty)"
+        }));
+        if (this.props.values.length) {
+            this.props.values.map((optionObject) => {
+                const { value, caption, attribute, comparison, constraint, filterMethod } = optionObject;
+                const optionValue: DropdownType = {
+                    "data-attribute": attribute,
+                    "data-comparison": comparison,
+                    "data-constraint": constraint,
+                    "data-filter": filterMethod,
+                    "label": caption,
+                    value
                 };
                 optionElements.push(createElement("option", optionValue));
             });
@@ -86,11 +67,13 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         return optionElements;
     }
 
-    private handleStatic(event: ChangeEvent<HTMLSelectElement>) {
-        this.props.updateConstraints(event.currentTarget.value);
-    }
-
-    private handleXPath(event: ChangeEvent<HTMLSelectElement>) {
-        this.props.handleChange(event.currentTarget.value);
+    private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
+        this.setState({
+            attributeName: event.currentTarget.selectedOptions[0].getAttribute("data-attribute"),
+            comparison: event.currentTarget.selectedOptions[0].getAttribute("data-comparison") as comparisonOptions,
+            constraint: event.currentTarget.selectedOptions[0].getAttribute("data-constraint"),
+            filter: event.currentTarget.selectedOptions[0].getAttribute("data-filter"),
+            value: event.currentTarget.value
+        });
     }
 }
