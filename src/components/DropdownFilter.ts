@@ -1,22 +1,22 @@
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
-import { ValueProps, comparisonOptions } from "./DropdownFilterContainer";
+import { FilterProps, filterOptions } from "./DropdownFilterContainer";
 
 export interface DropdownFilterProps {
-    handleChange: (value: string, attribute: string, comparison: comparisonOptions, constraint: string, filterMethod: string) => void;
-    values: ValueProps[];
+    handleChange: (value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) => void;
+    filters: FilterProps[];
 }
 
 interface DropdownFilterState {
     value: string;
     constraint: string;
     filter: string;
-    comparison: comparisonOptions;
+    filterBy: filterOptions;
     attributeName: string;
 }
 
 interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
-    "data-comparison": string;
+    "data-filterBy": string;
     "data-attribute": string;
     "data-constraint": string;
     "data-filter": string;
@@ -26,12 +26,12 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     constructor(props: DropdownFilterProps) {
         super(props);
 
-        this.state = { value: "", constraint: "", comparison: "static", attributeName: "", filter: "" };
+        this.state = { value: "", constraint: "", filterBy: "attribute", attributeName: "", filter: "" };
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     render() {
-        return createElement("div", { className: "form-group" },
+        return createElement("div", { className: "widget-dropdown-filter" },
             createElement("select", {
                 className: "form-control",
                 onChange: this.handleOnChange
@@ -40,7 +40,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     componentDidUpdate(_prevProps: DropdownFilterProps, _prevState: DropdownFilterState) {
-        this.props.handleChange(this.state.value, this.state.attributeName, this.state.comparison, this.state.constraint, this.state.filter);
+        this.props.handleChange(this.state.value, this.state.attributeName, this.state.filterBy, this.state.constraint, this.state.filter);
     }
 
     private createOptions(): Array<ReactElement<{}>> {
@@ -50,29 +50,27 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
             label: "",
             value: "(empty)"
         }));
-        if (this.props.values.length) {
-            this.props.values.map((optionObject) => {
-                const { value, caption, attribute, comparison, constraint, filterMethod } = optionObject;
-                const optionValue: DropdownType = {
-                    "data-attribute": attribute,
-                    "data-comparison": comparison,
-                    "data-constraint": constraint,
-                    "data-filter": filterMethod,
-                    "label": caption,
-                    value
-                };
-                optionElements.push(createElement("option", optionValue));
-            });
-        }
+        this.props.filters.map((optionObject) => {
+            const { value, caption, attribute, filterBy, constraint, filterMethod } = optionObject;
+            const optionValue: DropdownType = {
+                "data-attribute": attribute,
+                "data-constraint": constraint,
+                "data-filter": filterMethod,
+                "data-filterBy": filterBy,
+                "label": caption,
+                value
+            };
+            optionElements.push(createElement("option", optionValue));
+        });
         return optionElements;
     }
 
     private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
         this.setState({
             attributeName: event.currentTarget.selectedOptions[0].getAttribute("data-attribute"),
-            comparison: event.currentTarget.selectedOptions[0].getAttribute("data-comparison") as comparisonOptions,
             constraint: event.currentTarget.selectedOptions[0].getAttribute("data-constraint"),
             filter: event.currentTarget.selectedOptions[0].getAttribute("data-filter"),
+            filterBy: event.currentTarget.selectedOptions[0].getAttribute("data-filterBy") as filterOptions,
             value: event.currentTarget.value
         });
     }

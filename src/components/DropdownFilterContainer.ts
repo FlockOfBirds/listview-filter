@@ -12,12 +12,12 @@ export interface DropdownFilterContainerProps {
     entity: string;
     mxform: mxui.lib.form._FormBase;
     targetGridName: string;
-    values: ValueProps[];
+    filters: FilterProps[];
 }
 
-export interface ValueProps {
+export interface FilterProps {
     caption: string;
-    comparison: comparisonOptions;
+    filterBy: filterOptions;
     attribute: string;
     value: string;
     constraint: string;
@@ -25,7 +25,7 @@ export interface ValueProps {
 }
 
 type filterMethodOptions = "equals" | "contains";
-export type comparisonOptions = "static" | "XPath";
+export type filterOptions = "attribute" | "XPath";
 type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
 
 export interface ListView extends mxui.widget._WidgetBase {
@@ -45,11 +45,12 @@ export interface ListView extends mxui.widget._WidgetBase {
     update: () => void;
 }
 
-interface DropdownFilterState {
-    findingWidget: boolean;
-    targetGrid?: ListView;
+export interface DropdownFilterState {
+    widgetAvailable: boolean;
+    targetListView?: ListView;
     targetNode?: HTMLElement;
     validationPassed?: boolean;
+    value?: string;
 }
 
 export default class DropdownFilterContainer extends Component<DropdownFilterContainerProps, DropdownFilterState> {
@@ -57,7 +58,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
     constructor(props: DropdownFilterContainerProps) {
         super(props);
 
-        this.state = { findingWidget: true };
+        this.state = { widgetAvailable: true };
         this.handleChange = this.handleChange.bind(this);
         dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.initDropdownFilter));
     }
@@ -70,31 +71,47 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
             createElement(ValidateConfigs, {
                 ...this.props as DropdownFilterContainerProps,
                 filterNode: this.state.targetNode,
-                targetGrid: this.state.targetGrid,
+                filters: this.props.filters,
                 targetGridName: this.props.targetGridName,
-                validate: !this.state.findingWidget,
-                values: this.props.values
+                targetListView: this.state.targetListView,
+                validate: !this.state.widgetAvailable
             }),
             this.renderDropdownFilter()
         );
     }
 
-    private handleChange(value: string, attribute: string, comparison: comparisonOptions, constraint: string, filterMethod: string) {
-        if (comparison === "static") {
-            this.updateByConstraint(value, attribute, filterMethod);
+    private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
+        if (this.state.validationPassed) {
+            return createElement(DropdownFilter, {
+                filters: this.props.filters,
+                handleChange: this.handleChange
+            });
+        }
+
+        return null;
+    }
+
+    private handleChange(value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) {
+        if (value === "(empty)") {
+            this.setState({ value: "" });
         } else {
-            this.updateByXpath(constraint);
+            if (filterBy === "attribute") {
+                this.updateByConstraint(value, attribute, filterMethod);
+            } else {
+                this.updateByXpath(constraint);
+            }
+            this.state.targetListView.update();
         }
     }
 
     private updateByXpath(constraint: string) {
-        this.state.targetGrid.datasource.xpathConstraints = constraint;
+        this.state.targetListView.datasource.xpathConstraints = constraint;
     }
 
     private updateByConstraint(value: string, attribute: string, filterMethod: string) {
         const constraints: HybridConstraint = [];
-        if (this.state.targetGrid && this.state.targetGrid._datasource) {
-            const datasource = this.state.targetGrid._datasource;
+        if (this.state.targetListView && this.state.targetListView._datasource) {
+            const datasource = this.state.targetListView._datasource;
             if (window.device) {
                 constraints.push({
                     attribute,
@@ -108,40 +125,29 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
                 constraint = `${filterMethod}(${attribute},'${value}')`;
                 datasource._constraints = value ? "[" + constraint + "]" : "";
             }
-            this.state.targetGrid.update();
+            this.state.targetListView.update();
         }
-    }
-
-    private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
-        if (this.state.validationPassed) {
-            return createElement(DropdownFilter, {
-                handleChange: this.handleChange,
-                values: this.props.values
-            });
-        }
-
-        return null;
     }
 
     private initDropdownFilter() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
         const targetNode = ValidateConfigs.findTargetNode(this.props, filterNode);
-        let targetGrid: ListView | null = null;
+        let targetListView: ListView | null = null;
 
         if (targetNode) {
             this.setState({ targetNode });
-            targetGrid = dijitRegistry.byNode(targetNode);
-            if (targetGrid) {
-                this.setState({ targetGrid });
+            targetListView = dijitRegistry.byNode(targetNode);
+            if (targetListView) {
+                this.setState({ targetListView });
             }
         }
         const validateMessage = ValidateConfigs.validate({
             ...this.props as DropdownFilterContainerProps,
             filterNode: targetNode,
-            targetGrid,
             targetGridName: this.props.targetGridName,
+            targetListView,
             validate: true
         });
-        this.setState({ findingWidget: false, validationPassed: !validateMessage });
+        this.setState({ widgetAvailable: false, validationPassed: !validateMessage });
     }
 }

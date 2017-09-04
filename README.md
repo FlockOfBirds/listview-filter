@@ -1,4 +1,5 @@
 # Dropdown filter
+Filter Mendix List views using a dropdown
 
 ## Features
 

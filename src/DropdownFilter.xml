@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="com.mendix.widget.custom.DropdownFilter.DropdownFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+<widget id="com.mendix.widget.custom.dropdownfilter.DropdownFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Dropdown filter</name>
-    <description>Search Mendix List views, Template Grids and Data Grids using a single-field search</description>
+    <description>Filter Mendix List views using a dropdown</description>
     <icon/>
     <properties>
         <property key="entity" type="entity">
             <caption>List view entity</caption>
             <category>Data source</category>
-            <description>Full name of the entity "module.entity". This entity should match the list view entity</description>
+            <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
         </property>
-        <property key="values" type="object" isList="true" required="false">
-            <caption>Options</caption>
+        <property key="filters" type="object" isList="true" required="false">
+            <caption>Filters</caption>
             <category>Data source</category>
-            <description>The filter options</description>
+            <description/>
             <properties>
-                <property key="caption" type="translatableString" required="false">
+                <property key="caption" type="string" required="false">
                     <caption>Caption</caption>
                     <category>General</category>
                     <description/>
-                    <translations>
-                        <translation lang="en_US">Caption</translation>
-                        <translation lang="nl_NL">Onderschrift</translation>
-                    </translations>
                 </property>
-                <property key="comparison" type="enumeration" defaultValue="static">
+                <property key="filterBy" type="enumeration" defaultValue="attribute">
                     <caption>Comparison</caption>
                     <category>General</category>
                     <description/>
                     <enumerationValues>
-                        <enumerationValue key="static">Static</enumerationValue>
+                        <enumerationValue key="attribute">Attribute</enumerationValue>
                         <enumerationValue key="XPath">XPath</enumerationValue>
                     </enumerationValues>
                 </property>
@@ -51,23 +47,18 @@
                 <property key="constraint" type="entityConstraint" required="false" entityProperty="../entity">
                     <caption>Constraint</caption>
                     <category>General</category>
-                    <description/>
+                    <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
                 </property>
                 <property key="filterMethod" type="enumeration" defaultValue="contains">
                     <caption>Filter method</caption>
                     <category>General</category>
-                    <description>Contains as default and first option</description>
+                    <description/>
                     <enumerationValues>
-                        <enumerationValue key="equals">Equals</enumerationValue>
                         <enumerationValue key="contains">Contains</enumerationValue>
+                        <enumerationValue key="equals">Equals</enumerationValue>
                     </enumerationValues>
                 </property>
             </properties>
-        </property>
-        <property key="targetGridName" type="string" required="false">
-            <caption>List view name</caption>
-            <category>Data source</category>
-            <description>Optional, if not specified the closest list view is used</description>
         </property>
     </properties>
 </widget>
