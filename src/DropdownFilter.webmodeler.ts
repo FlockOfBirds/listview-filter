@@ -5,6 +5,10 @@ import { DropdownFilter } from "./components/DropdownFilter";
 import { DropdownFilterContainerProps, DropdownFilterState } from "./components/DropdownFilterContainer";
 import { ValidateConfigs } from "./components/ValidateConfigs";
 
+// type VisibilityMap = {
+//     [ P in keyof DropdownFilterContainerProps ]: boolean;
+// };
+
 // tslint:disable-next-line class-name
 export class preview extends Component<DropdownFilterContainerProps, DropdownFilterState> {
     constructor(props: DropdownFilterContainerProps) {
@@ -19,8 +23,8 @@ export class preview extends Component<DropdownFilterContainerProps, DropdownFil
                 ...this.props as DropdownFilterContainerProps,
                 filterNode: this.state.targetNode,
                 filters: this.props.filters,
-                targetGridName: this.props.targetGridName,
                 targetListView: this.state.targetListView,
+                targetListViewName: this.props.targetListViewName,
                 validate: !this.state.widgetAvailable
             }),
             createElement(DropdownFilter, {
@@ -47,4 +51,22 @@ export class preview extends Component<DropdownFilterContainerProps, DropdownFil
         }
         this.setState({ widgetAvailable: true });
     }
+}
+
+export function getVisibleProperties(valueMap: DropdownFilterContainerProps, visibilityMap: any) {
+    valueMap.filters.forEach(filterAttribute => {
+        if (filterAttribute.filterBy === "attribute") {
+            visibilityMap.filters.attribute = true;
+            visibilityMap.filters.filterBy = true;
+            visibilityMap.filters.value = true;
+            visibilityMap.filters.constraint = false;
+        } else if (filterAttribute.filterBy === "XPath") {
+            visibilityMap.filters.attribute = false;
+            visibilityMap.filters.filterBy = false;
+            visibilityMap.filters.value = false;
+            visibilityMap.filters.constraint = true;
+        }
+    });
+
+    return visibilityMap;
 }

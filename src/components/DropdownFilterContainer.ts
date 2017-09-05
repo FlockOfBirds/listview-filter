@@ -11,7 +11,7 @@ import { ValidateConfigs } from "./ValidateConfigs";
 export interface DropdownFilterContainerProps {
     entity: string;
     mxform: mxui.lib.form._FormBase;
-    targetGridName: string;
+    targetListViewName: string;
     filters: FilterProps[];
 }
 
@@ -60,7 +60,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
 
         this.state = { widgetAvailable: true };
         this.handleChange = this.handleChange.bind(this);
-        dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.initDropdownFilter));
+        dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.connectToListView));
     }
 
     render() {
@@ -72,8 +72,8 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
                 ...this.props as DropdownFilterContainerProps,
                 filterNode: this.state.targetNode,
                 filters: this.props.filters,
-                targetGridName: this.props.targetGridName,
                 targetListView: this.state.targetListView,
+                targetListViewName: this.props.targetListViewName,
                 validate: !this.state.widgetAvailable
             }),
             this.renderDropdownFilter()
@@ -129,7 +129,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         }
     }
 
-    private initDropdownFilter() {
+    private connectToListView() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
         const targetNode = ValidateConfigs.findTargetNode(this.props, filterNode);
         let targetListView: ListView | null = null;
@@ -144,8 +144,8 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         const validateMessage = ValidateConfigs.validate({
             ...this.props as DropdownFilterContainerProps,
             filterNode: targetNode,
-            targetGridName: this.props.targetGridName,
             targetListView,
+            targetListViewName: this.props.targetListViewName,
             validate: true
         });
         this.setState({ widgetAvailable: false, validationPassed: !validateMessage });

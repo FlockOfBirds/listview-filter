@@ -31,7 +31,7 @@
                 <property key="attribute" type="attribute" required="false" entityProperty="../entity">
                     <caption>Attribute</caption>
                     <category>General</category>
-                    <description>Attribute on the list view datasource entity or list view filter entity</description>
+                    <description>The attribute on which the filter method is applied to</description>
                     <attributeTypes>
                         <attributeType name="String"/>
                         <attributeType name="Integer"/>

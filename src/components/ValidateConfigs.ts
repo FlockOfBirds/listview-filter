@@ -7,7 +7,7 @@ export interface ValidateConfigProps extends DropdownFilterContainerProps {
     inWebModeler?: boolean;
     filterNode?: HTMLElement;
     targetListView?: ListView;
-    targetGridName: string;
+    targetListViewName: string;
     validate: boolean;
 }
 
@@ -24,13 +24,13 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
 
     static validate(props: ValidateConfigProps): string {
         if (!props.filterNode) {
-            return `${widgetName}: unable to find grid with the name "${props.targetGridName}"`;
+            return `${widgetName}: unable to find listview with the name "${props.targetListViewName}"`;
         }
         if (props.inWebModeler) {
             return "";
         }
         if (!(props.targetListView && props.targetListView.declaredClass === "mxui.widget.ListView")) {
-            return `${widgetName}: supplied target name "${props.targetGridName}" is not of the type list view`;
+            return `${widgetName}: supplied target name "${props.targetListViewName}" is not of the type list view`;
         }
         if (!ValidateConfigs.isCompatible(props.targetListView)) {
             return `${widgetName}: this Mendix version is incompatible with the offline search widget`;
@@ -106,8 +106,8 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
         let targetNode: HTMLElement | null = null ;
 
         while (!targetNode && filterNode) {
-            targetNode = props.targetGridName
-                ? filterNode.querySelector(`.mx-name-${props.targetGridName}`) as HTMLElement
+            targetNode = props.targetListViewName
+                ? filterNode.querySelector(`.mx-name-${props.targetListViewName}`) as HTMLElement
                 : filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
 
             if (targetNode) break;
