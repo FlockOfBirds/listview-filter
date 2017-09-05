@@ -92,14 +92,7 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
     }
 
     static isCompatible(targetListView: ListView): boolean {
-        return !!(targetListView &&
-            targetListView._onLoad &&
-            targetListView._loadMore &&
-            targetListView._renderData &&
-            targetListView._datasource &&
-            targetListView._datasource.atEnd &&
-            typeof targetListView._datasource._pageSize !== "undefined" &&
-            typeof targetListView._datasource._setSize !== "undefined");
+        return !!(targetListView && targetListView._datasource);
     }
 
     static findTargetNode(props: DropdownFilterContainerProps, filterNode: HTMLElement): HTMLElement | null {

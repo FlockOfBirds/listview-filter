@@ -21,10 +21,8 @@ export interface FilterProps {
     attribute: string;
     value: string;
     constraint: string;
-    filterMethod: filterMethodOptions;
 }
 
-type filterMethodOptions = "equals" | "contains";
 export type filterOptions = "attribute" | "XPath";
 type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
 
@@ -35,13 +33,7 @@ export interface ListView extends mxui.widget._WidgetBase {
     _datasource: {
         _constraints: HybridConstraint | string;
         _entity: string;
-        _setSize: number;
-        atEnd: () => boolean;
-        _pageSize: number;
     };
-    _loadMore: () => void;
-    _onLoad: () => void;
-    _renderData: () => void;
     update: () => void;
 }
 
@@ -64,6 +56,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
     }
 
     render() {
+        // validate filter values if filterby is attribute, then value should not be empty or "" or " ".
         return createElement("div",
             {
                 className: classNames("widget-dropdown-filter")
@@ -91,40 +84,25 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         return null;
     }
 
-    private handleChange(value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) {
-        if (value === "(empty)") {
-            this.setState({ value: "" });
-        } else {
-            if (filterBy === "attribute") {
-                this.updateByConstraint(value, attribute, filterMethod);
-            } else {
-                this.updateByXpath(constraint);
-            }
-            this.state.targetListView.update();
-        }
-    }
-
-    private updateByXpath(constraint: string) {
-        this.state.targetListView.datasource.xpathConstraints = constraint;
-    }
-
-    private updateByConstraint(value: string, attribute: string, filterMethod: string) {
-        const constraints: HybridConstraint = [];
+    private handleChange(value: string, attribute: string, filterBy: filterOptions, constraint: string) {
         if (this.state.targetListView && this.state.targetListView._datasource) {
-            const datasource = this.state.targetListView._datasource;
+            let dataConstraint: HybridConstraint | string = [];
+
             if (window.device) {
-                constraints.push({
+                dataConstraint.push({
                     attribute,
-                    operator: filterMethod,
+                    operator: "contains",
                     path: this.props.entity,
                     value
                 });
-                datasource._constraints = value ? constraints : [];
             } else {
-                let constraint: HybridConstraint | string = [];
-                constraint = `${filterMethod}(${attribute},'${value}')`;
-                datasource._constraints = value ? "[" + constraint + "]" : "";
+                if (filterBy === "XPath") {
+                    dataConstraint = constraint;
+                } else if (value) {
+                    dataConstraint = `[contains(${attribute},'${value}')]`;
+                }
             }
+            this.state.targetListView._datasource._constraints = dataConstraint;
             this.state.targetListView.update();
         }
     }

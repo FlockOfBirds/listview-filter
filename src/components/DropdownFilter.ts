@@ -19,7 +19,6 @@ interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
     "data-filterBy": string;
     "data-attribute": string;
     "data-constraint": string;
-    "data-filter": string;
 }
 
 export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilterState> {
@@ -48,14 +47,13 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         optionElements.push(createElement("option", {
             className: "",
             label: "",
-            value: "(empty)"
+            value: ""
         }));
         this.props.filters.map((optionObject) => {
-            const { value, caption, attribute, filterBy, constraint, filterMethod } = optionObject;
+            const { value, caption, attribute, filterBy, constraint } = optionObject;
             const optionValue: DropdownType = {
                 "data-attribute": attribute,
                 "data-constraint": constraint,
-                "data-filter": filterMethod,
                 "data-filterBy": filterBy,
                 "label": caption,
                 value
@@ -69,7 +67,6 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         this.setState({
             attributeName: event.currentTarget.selectedOptions[0].getAttribute("data-attribute"),
             constraint: event.currentTarget.selectedOptions[0].getAttribute("data-constraint"),
-            filter: event.currentTarget.selectedOptions[0].getAttribute("data-filter"),
             filterBy: event.currentTarget.selectedOptions[0].getAttribute("data-filterBy") as filterOptions,
             value: event.currentTarget.value
         });

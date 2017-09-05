@@ -49,15 +49,6 @@
                     <category>General</category>
                     <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
                 </property>
-                <property key="filterMethod" type="enumeration" defaultValue="contains">
-                    <caption>Filter method</caption>
-                    <category>General</category>
-                    <description/>
-                    <enumerationValues>
-                        <enumerationValue key="contains">Contains</enumerationValue>
-                        <enumerationValue key="equals">Equals</enumerationValue>
-                    </enumerationValues>
-                </property>
             </properties>
         </property>
     </properties>

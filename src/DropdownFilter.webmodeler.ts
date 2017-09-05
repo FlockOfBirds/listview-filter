@@ -43,6 +43,7 @@ export class preview extends Component<DropdownFilterContainerProps, DropdownFil
     }
 
     private validateConfigs(props: DropdownFilterContainerProps) {
+        // validate filter values if filterby is attribute, then value should not be empty or "" or " ".
         const routeNode = findDOMNode(this) as HTMLElement;
         const targetNode = ValidateConfigs.findTargetNode(props, routeNode);
 
