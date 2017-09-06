@@ -1,10 +1,13 @@
+import * as classNames from "classnames";
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
 import { FilterProps, filterOptions } from "./DropdownFilterContainer";
 
 export interface DropdownFilterProps {
+    className?: string;
     handleChange: (value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) => void;
     filters: FilterProps[];
+    style?: object;
 }
 
 interface DropdownFilterState {
@@ -30,7 +33,10 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     render() {
-        return createElement("div", { className: "widget-dropdown-filter" },
+        return createElement("div", {
+            className: classNames("widget-dropdown-filter", this.props.className),
+            style: this.props.style
+        },
             createElement("select", {
                 className: "form-control",
                 onChange: this.handleOnChange

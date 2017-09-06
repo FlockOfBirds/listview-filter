@@ -5,10 +5,6 @@ import { DropdownFilter } from "./components/DropdownFilter";
 import { DropdownFilterContainerProps, DropdownFilterState } from "./components/DropdownFilterContainer";
 import { ValidateConfigs } from "./components/ValidateConfigs";
 
-// type VisibilityMap = {
-//     [ P in keyof DropdownFilterContainerProps ]: boolean;
-// };
-
 // tslint:disable-next-line class-name
 export class preview extends Component<DropdownFilterContainerProps, DropdownFilterState> {
     constructor(props: DropdownFilterContainerProps) {

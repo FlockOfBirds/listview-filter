@@ -8,7 +8,12 @@ import * as dojoConnect from "dojo/_base/connect";
 import { DropdownFilter, DropdownFilterProps } from "./DropdownFilter";
 import { ValidateConfigs } from "./ValidateConfigs";
 
-export interface DropdownFilterContainerProps {
+interface WrapperProps {
+    class: string;
+    style: string;
+}
+
+export interface DropdownFilterContainerProps extends WrapperProps {
     entity: string;
     mxform: mxui.lib.form._FormBase;
     targetListViewName: string;
@@ -27,9 +32,6 @@ export type filterOptions = "attribute" | "XPath";
 type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
 
 export interface ListView extends mxui.widget._WidgetBase {
-    datasource: {
-        xpathConstraints: string;
-    };
     _datasource: {
         _constraints: HybridConstraint | string;
         _entity: string;
@@ -76,8 +78,10 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
         if (this.state.validationPassed) {
             return createElement(DropdownFilter, {
+                className: this.props.class,
                 filters: this.props.filters,
-                handleChange: this.handleChange
+                handleChange: this.handleChange,
+                style: DropdownFilterContainer.parseStyle(this.props.style)
             });
         }
 
@@ -127,5 +131,23 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
             validate: true
         });
         this.setState({ widgetAvailable: false, validationPassed: !validateMessage });
+    }
+
+    public static parseStyle(style = ""): { [key: string]: string } {
+        try {
+            return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
+                const pair = line.split(":");
+                if (pair.length === 2) {
+                    const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());
+                    styleObject[name] = pair[1].trim();
+                }
+                return styleObject;
+            }, {});
+        } catch (error) {
+            // tslint:disable-next-line no-console
+            console.error("Failed to parse style", style, error);
+        }
+
+        return {};
     }
 }
