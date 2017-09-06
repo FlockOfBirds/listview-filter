@@ -26,7 +26,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     constructor(props: DropdownFilterProps) {
         super(props);
-
+        // because select is a controlled component which has its own state
         this.state = { value: "", constraint: "", filterBy: "attribute", attributeName: "", filter: "" };
         this.handleOnChange = this.handleOnChange.bind(this);
     }
@@ -94,6 +94,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
+        console.log(this.state.value); // tslint:disable-line
         this.setState({
             attributeName: event.currentTarget.selectedOptions[0].getAttribute("data-attribute"),
             constraint: event.currentTarget.selectedOptions[0].getAttribute("data-constraint"),

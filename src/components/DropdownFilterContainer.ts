@@ -16,11 +16,12 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
 
         this.state = { widgetAvailable: true };
         this.handleChange = this.handleChange.bind(this);
+        // Ensure that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
         dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.connectToListView));
     }
 
     render() {
-        // validate filter values if filterby is attribute, then value should not be empty or "" or " ".
+        // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
         return createElement("div",
             {
                 className: classNames("widget-dropdown-filter")
