@@ -1,51 +1,13 @@
 import { Component, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
-import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
-import * as dojoLang from "dojo/_base/lang";
+import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
+import * as dojoLang from "dojo/_base/lang";
 
 import { DropdownFilter, DropdownFilterProps } from "./DropdownFilter";
+import { DropdownFilterContainerProps, DropdownFilterState, HybridConstraint, ListView, filterOptions, parseStyle } from "../utils/ContainerUtils";
 import { ValidateConfigs } from "./ValidateConfigs";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-}
-
-export interface DropdownFilterContainerProps extends WrapperProps {
-    entity: string;
-    mxform: mxui.lib.form._FormBase;
-    targetListViewName: string;
-    filters: FilterProps[];
-}
-
-export interface FilterProps {
-    caption: string;
-    filterBy: filterOptions;
-    attribute: string;
-    value: string;
-    constraint: string;
-}
-
-export type filterOptions = "attribute" | "XPath";
-type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
-
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        _constraints: HybridConstraint | string;
-        _entity: string;
-    };
-    update: () => void;
-}
-
-export interface DropdownFilterState {
-    widgetAvailable: boolean;
-    targetListView?: ListView;
-    targetNode?: HTMLElement;
-    validationPassed?: boolean;
-    value?: string;
-}
 
 export default class DropdownFilterContainer extends Component<DropdownFilterContainerProps, DropdownFilterState> {
 
@@ -81,7 +43,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
                 className: this.props.class,
                 filters: this.props.filters,
                 handleChange: this.handleChange,
-                style: DropdownFilterContainer.parseStyle(this.props.style)
+                style: parseStyle(this.props.style)
             });
         }
 
@@ -131,23 +93,5 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
             validate: true
         });
         this.setState({ widgetAvailable: false, validationPassed: !validateMessage });
-    }
-
-    public static parseStyle(style = ""): { [key: string]: string } {
-        try {
-            return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
-                const pair = line.split(":");
-                if (pair.length === 2) {
-                    const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());
-                    styleObject[name] = pair[1].trim();
-                }
-                return styleObject;
-            }, {});
-        } catch (error) {
-            // tslint:disable-next-line no-console
-            console.error("Failed to parse style", style, error);
-        }
-
-        return {};
     }
 }

@@ -1,12 +1,12 @@
 import * as classNames from "classnames";
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
-import { FilterProps, filterOptions } from "./DropdownFilterContainer";
+import { FilterProps, filterOptions } from "../utils/ContainerUtils";
 
 export interface DropdownFilterProps {
     className?: string;
-    handleChange: (value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) => void;
-    filters: FilterProps[];
+    handleChange?: (value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) => void;
+    filters?: FilterProps[];
     style?: object;
 }
 

@@ -1,7 +1,7 @@
 import { Component, createElement } from "react";
 
-import { DropdownFilterContainerProps, ListView } from "../components/DropdownFilterContainer";
 import { Alert } from "../components/Alert";
+import { DropdownFilterContainerProps, ListView } from "../utils/ContainerUtils";
 
 export interface ValidateConfigProps extends DropdownFilterContainerProps {
     inWebModeler?: boolean;
