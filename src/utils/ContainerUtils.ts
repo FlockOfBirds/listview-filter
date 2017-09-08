@@ -1,6 +1,14 @@
+import { OptionHTMLAttributes } from "react";
+
 interface WrapperProps {
     class: string;
     style: string;
+}
+
+export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
+    "data-filterBy": string;
+    "data-attribute": string;
+    "data-constraint": string;
 }
 
 export interface DropdownFilterContainerProps extends WrapperProps {
@@ -12,10 +20,11 @@ export interface DropdownFilterContainerProps extends WrapperProps {
 
 export interface FilterProps {
     caption: string;
-    filterBy: filterOptions;
-    attribute: string;
-    value: string;
-    constraint: string;
+    filterBy?: filterOptions;
+    attribute?: string;
+    value?: string;
+    constraint?: string;
+    isDefaultOption?: boolean;
 }
 
 export interface ListView extends mxui.widget._WidgetBase {

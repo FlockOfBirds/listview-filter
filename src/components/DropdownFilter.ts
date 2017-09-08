@@ -1,11 +1,11 @@
 import * as classNames from "classnames";
-import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
+import { ChangeEvent, Component, ReactElement, createElement } from "react";
 
-import { FilterProps, filterOptions } from "../utils/ContainerUtils";
+import { DropdownType, FilterProps, filterOptions } from "../utils/ContainerUtils";
 
 export interface DropdownFilterProps {
-    className?: string;
-    handleChange?: (value: string, attribute: string, filterBy: filterOptions, constraint: string, filterMethod: string) => void;
+    className: string;
+    handleChange?: (value: string, attribute: string, filterBy: filterOptions, constraint: string) => void;
     filters?: FilterProps[];
     style?: object;
 }
@@ -18,13 +18,12 @@ interface DropdownFilterState {
     attributeName: string;
 }
 
-interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
-    "data-filterBy": string;
-    "data-attribute": string;
-    "data-constraint": string;
-}
-
 export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilterState> {
+    private defaultAttribute: string;
+    private defaultComparison: filterOptions;
+    private defaultConstraint: string;
+    private defaultValue: string;
+
     constructor(props: DropdownFilterProps) {
         super(props);
 
@@ -44,11 +43,22 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         );
     }
 
+    componentDidMount() {
+        this.props.handleChange(this.defaultAttribute, this.defaultConstraint, this.defaultComparison, this.defaultValue);
+        this.setState({
+            attributeName: this.defaultAttribute,
+            constraint: this.defaultConstraint,
+            filterBy: this.defaultComparison,
+            value: this.defaultValue
+        });
+    }
+
     componentDidUpdate(_prevProps: DropdownFilterProps, _prevState: DropdownFilterState) {
-        this.props.handleChange(this.state.value, this.state.attributeName, this.state.filterBy, this.state.constraint, this.state.filter);
+        this.props.handleChange(this.state.value, this.state.attributeName, this.state.filterBy, this.state.constraint);
     }
 
     private createOptions(): Array<ReactElement<{}>> {
+        let foundDefaultFilterOption;
         const optionElements: Array<ReactElement<{}>> = [];
         optionElements.push(createElement("option", {
             className: "",
@@ -56,16 +66,30 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
             value: ""
         }));
         this.props.filters.map((optionObject) => {
-            const { value, caption, attribute, filterBy, constraint } = optionObject;
+            const { value, caption, attribute, filterBy, constraint, isDefaultOption } = optionObject;
             const optionValue: DropdownType = {
                 "data-attribute": attribute,
                 "data-constraint": constraint,
                 "data-filterBy": filterBy,
                 "label": caption,
+                "selected": isDefaultOption && !foundDefaultFilterOption,
                 value
             };
+            if (isDefaultOption) {
+                foundDefaultFilterOption = true;
+                this.defaultAttribute = attribute;
+                this.defaultValue = value;
+                this.defaultComparison = filterBy;
+                this.defaultConstraint = constraint;
+            }
             optionElements.push(createElement("option", optionValue));
         });
+        if (!foundDefaultFilterOption && this.props.filters.length > 0) {
+            this.defaultAttribute = this.props.filters[0].attribute;
+            this.defaultComparison = this.props.filters[0].filterBy;
+            this.defaultConstraint = this.props.filters[0].constraint;
+            this.defaultValue = this.props.filters[0].value;
+        }
         return optionElements;
     }
 

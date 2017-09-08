@@ -49,6 +49,11 @@
                     <category>General</category>
                     <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
                 </property>
+                <property key="isDefaultOption" type="boolean" defaultValue="false">
+                    <caption>Default option</caption>
+                    <category>General</category>
+                    <description>if non is selected or other attributes are set to true, the widget will select the first</description>
+                </property>
             </properties>
         </property>
     </properties>
