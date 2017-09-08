@@ -9,7 +9,7 @@ const widgetConfig = {
     entry: `./src/components/${widgetName}Container.ts`,
     output: {
         path: path.resolve(__dirname, "dist/tmp"),
-        filename: `src/com/mendix/widget/custom/${widgetName}/${widgetName}.js`,
+        filename: `src/com/mendix/widget/custom/dropdownfilter/${widgetName}.js`,
         libraryTarget: "umd"
     },
     resolve: {
