@@ -15,11 +15,15 @@ const widgetName = "dropdown filter widget";
 
 export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
     render() {
-        return createElement(Alert, {
-            bootstrapStyle: "danger",
-            className: "widget-dropdown-filter-alert",
-            message: this.props.validate ? ValidateConfigs.validate(this.props) : null
-        });
+        if (ValidateConfigs.validate(this.props)) {
+            return createElement(Alert, {
+                bootstrapStyle: "danger",
+                className: "widget-dropdown-filter-alert",
+                message: this.props.validate ? ValidateConfigs.validate(this.props) : null
+            });
+        } else {
+            return null;
+        }
     }
 
     static validate(props: ValidateConfigProps): string {
@@ -52,7 +56,10 @@ export class ValidateConfigs extends Component<ValidateConfigProps, {}> {
                 ? filterNode.querySelector(`.mx-name-${props.targetListViewName}`) as HTMLElement
                 : filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
 
-            if (targetNode) break;
+            if (targetNode || filterNode.classList.contains("mx-incubator")
+                || filterNode.classList.contains("mx-offscreen")) {
+                    break;
+                }
             filterNode = filterNode.parentNode as HTMLElement;
         }
 

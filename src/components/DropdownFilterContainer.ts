@@ -9,14 +9,63 @@ import { DropdownFilter, DropdownFilterProps } from "./DropdownFilter";
 import { DropdownFilterContainerProps, DropdownFilterState, HybridConstraint, ListView, filterOptions, parseStyle } from "../utils/ContainerUtils";
 import { ValidateConfigs } from "./ValidateConfigs";
 
+// import { Alert } from "../components/Alert";
+import { ValidateConfigs } from "./ValidateConfigs";
+
+export interface DropdownFilterContainerProps {
+    friendlyId: string;
+    entity: string;
+    mxform: mxui.lib.form._FormBase;
+    targetListViewName: string;
+    filters: FilterProps[];
+}
+
+export interface FilterProps {
+    caption: string;
+    filterBy: filterOptions;
+    attribute: string;
+    value: string;
+    constraint: string;
+}
+
+export type filterOptions = "attribute" | "XPath";
+type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
+
+export interface ListView extends mxui.widget._WidgetBase {
+    _datasource: {
+        _constraints: HybridConstraint | string;
+        _entity: string;
+    };
+    filter: {
+        [key: string ]: HybridConstraint | string;
+    };
+    update: () => void;
+}
+
+export interface DropdownFilterState {
+    widgetAvailable: boolean;
+    targetListView?: ListView;
+    targetNode?: HTMLElement;
+    validationPassed?: boolean;
+    value?: string;
+}
+
 export default class DropdownFilterContainer extends Component<DropdownFilterContainerProps, DropdownFilterState> {
 
+    private emptyFilter: FilterProps;
     constructor(props: DropdownFilterContainerProps) {
         super(props);
 
         this.state = { widgetAvailable: true };
         this.handleChange = this.handleChange.bind(this);
-        // Ensure that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
+        this.emptyFilter = {
+            attribute: "",
+            caption: "",
+            constraint: "",
+            filterBy: "attribute",
+            value: ""
+        };
+        // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
         dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.connectToListView));
     }
 
@@ -51,26 +100,25 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
         return null;
     }
 
-    private handleChange(value: string, attribute: string, filterBy: filterOptions, constraint: string) {
-        if (this.state.targetListView && this.state.targetListView._datasource) {
-            let dataConstraint: HybridConstraint | string = [];
+    private handleChange(value: string) {
+        const { targetListView } = this.state;
+        const selectedFilter = this.props.filters.filter((filter) => filter.caption === value)[0];
 
-            if (window.device) {
-                dataConstraint.push({
-                    attribute,
-                    operator: "contains",
-                    path: this.props.entity,
-                    value
-                });
+        if (targetListView && targetListView._datasource) {
+            const { attribute, filterBy, constraint } = selectedFilter || this.emptyFilter;
+            if (filterBy === "XPath") {
+                targetListView.filter[this.props.friendlyId] = constraint;
+            } else if (value) {
+                targetListView.filter[this.props.friendlyId] = `[contains(${attribute},'${value}')]`;
             } else {
-                if (filterBy === "XPath") {
-                    dataConstraint = constraint;
-                } else if (value) {
-                    dataConstraint = `[contains(${attribute},'${value}')]`;
-                }
+                targetListView.filter[this.props.friendlyId] = "";
             }
-            this.state.targetListView._datasource._constraints = dataConstraint;
-            this.state.targetListView.update();
+
+            const finalContraint = Object.keys(targetListView.filter)
+                .map(key => targetListView.filter[key])
+                .join("");
+            targetListView._datasource._constraints = finalContraint;
+            targetListView.update();
         }
     }
 
@@ -83,6 +131,7 @@ export default class DropdownFilterContainer extends Component<DropdownFilterCon
             this.setState({ targetNode });
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
+                targetListView.filter = {};
                 this.setState({ targetListView });
             }
         }
