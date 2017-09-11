@@ -9,7 +9,7 @@
             <category>Data source</category>
             <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
         </property>
-        <property key="filters" type="object" isList="true" required="false">
+        <property key="filters" type="object" isList="true">
             <caption>Filters</caption>
             <category>Data source</category>
             <description/>
@@ -39,7 +39,7 @@
                         <attributeType name="Boolean"/>
                     </attributeTypes>
                 </property>
-                <property key="value" type="string" required="false">
+                <property key="attributeValue" type="string" required="false">
                     <caption>Value</caption>
                     <category>General</category>
                     <description/>
@@ -49,12 +49,12 @@
                     <category>General</category>
                     <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
                 </property>
-                <property key="isDefaultOption" type="boolean" defaultValue="false">
-                    <caption>Default option</caption>
-                    <category>General</category>
-                    <description>if non is selected or other attributes are set to true, the widget will select the first</description>
-                </property>
             </properties>
+        </property>
+        <property key="defaultFilter" type="integer" defaultValue="0">
+            <caption>Default filter</caption>
+            <category>Data source</category>
+            <description>Position of filter-option to use during initial rendering of the widget</description>
         </property>
     </properties>
 </widget>

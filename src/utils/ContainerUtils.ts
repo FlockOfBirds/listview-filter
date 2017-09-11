@@ -1,51 +1,4 @@
-import { OptionHTMLAttributes } from "react";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-}
-
-export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
-    "data-filterBy": string;
-    "data-attribute": string;
-    "data-constraint": string;
-}
-
-export interface DropdownFilterContainerProps extends WrapperProps {
-    entity: string;
-    mxform: mxui.lib.form._FormBase;
-    targetListViewName: string;
-    filters: FilterProps[];
-}
-
-export interface FilterProps {
-    caption: string;
-    filterBy?: filterOptions;
-    attribute?: string;
-    value?: string;
-    constraint?: string;
-    isDefaultOption?: boolean;
-}
-
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        _constraints: HybridConstraint | string;
-        _entity: string;
-    };
-    update: () => void;
-}
-
-export interface DropdownFilterState {
-    widgetAvailable: boolean;
-    targetListView?: ListView;
-    targetNode?: HTMLElement;
-    validationPassed?: boolean;
-    value?: string;
-}
-
-export type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
-
-export type filterOptions = "attribute" | "XPath";
+import { ContainerProps, ListView } from "../components/DropdownFilterContainer";
 
 export const parseStyle = (style = ""): {[key: string]: string} => {
     try {
@@ -64,3 +17,73 @@ export const parseStyle = (style = ""): {[key: string]: string} => {
 
     return {};
 };
+export class Utils {
+    static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean }): string {
+        const widgetName = "dropdown-filter";
+        // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
+        if (!props.filterNode) {
+            return `${widgetName}: unable to find a listview with to attach to`;
+        }
+
+        if (!(props.targetListView && props.targetListView._datasource)) {
+            return `${widgetName}: this Mendix version is incompatible`;
+        }
+
+        if (props.entity && !Utils.itContains(props.entity, "/")) {
+            if (props.entity !== props.targetListView._entity) {
+                return `${widgetName}: supplied entity "${props.entity}" does not belong to list view data source`;
+            }
+        }
+
+        if (props.filters && !props.filters.length) {
+            return `${widgetName}: should have atleast one filter`;
+        }
+
+        if (props.filters) {
+            const errorMessage: string[] = [];
+            props.filters.forEach((filter, index) => {
+                if (filter.filterBy === "XPath" && !filter.constraint) {
+                    errorMessage.push(`Filter position: {${index + 1 }} is missing XPath constraint`);
+                }
+                if (filter.filterBy === "attribute" && !filter.attributeValue) {
+                    errorMessage.push(`Filter position: {${index + 1 }} is missing a Value constraint`);
+                }
+            });
+            if (errorMessage.length) {
+                return `${widgetName} : ${errorMessage.join(", ")}`;
+            }
+        }
+
+        if (!isNaN(props.defaultFilter) && props.defaultFilter >= 0 && props.defaultFilter > props.filters.length) {
+            return `${widgetName}: Default-Filter value must be less or equal to maximum filter-count '${props.filters.length}'`;
+        }
+
+        return "";
+    }
+
+    static isCompatible(targetListView: ListView): boolean {
+        return !!(targetListView && targetListView._datasource);
+    }
+
+    static findTargetNode(props: ContainerProps, filterNode: HTMLElement): HTMLElement | null {
+        let targetNode: HTMLElement | null = null ;
+
+        while (!targetNode && filterNode) {
+            targetNode = props.targetListViewName
+                ? filterNode.querySelector(`.mx-name-${props.targetListViewName}`) as HTMLElement
+                : filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
+
+            if (targetNode || filterNode.classList.contains("mx-incubator")
+                || filterNode.classList.contains("mx-offscreen")) {
+                    break;
+                }
+            filterNode = filterNode.parentNode as HTMLElement;
+        }
+
+        return targetNode;
+    }
+
+    static itContains(array: string[] | string, element: string) {
+        return array.indexOf(element) > -1;
+    }
+}
