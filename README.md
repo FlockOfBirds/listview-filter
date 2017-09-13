@@ -1,49 +1,34 @@
+[![Build Status](https://travis-ci.org/mendixlabs/listview-filter.svg?branch=master)](https://travis-ci.org/mendixlabs/listview-filter)
+[![Dependency Status](https://david-dm.org/mendixlabs/listview-filter.svg)](https://david-dm.org/mendixlabs/listview-filter)
+[![Dev Dependency Status](https://david-dm.org/mendixlabs/listview-filter.svg#info=devDependencies)](https://david-dm.org/mendixlabs/listview-filter#info=devDependencies)
+[![codecov](https://codecov.io/gh/mendixlabs/listview-filter/branch/master/graph/badge.svg)](https://codecov.io/gh/mendixlabs/listview-filter)
+
 # Dropdown filter
-Filter Mendix List views using a dropdown
+Filter mendix List views using a dropdown
 
 ## Features
-
-## Limitations
+* Filter items with in a listview by an attribute
+* Filter items with in a listview by XPath
+* Select a filter from a list of options
+* Set a default filter option
 
 ## Dependencies
-Mendix 7.4
+Mendix 7.6
 
 ## Demo project
+[https://dropdownfilter.mxapps.io/](https://dropdownfilter.mxapps.io/)
 
 ## Usage
-
-### Data source configuration
+The List view entity in the `Data source` tab is a requires property.
+![Data source](/assets/Datasource.png)
+Add a new filter with a caption and choose comparison type.
+![Filters](/assets/Filters.png)
+When filtering by `Attribute`, select an attribute and input a value to filter by, while when filtering by `XPath`,
+input a constraint to filter by.
+![Constraint](/assets/Constraint.png)
 
 ## Issues, suggestions and feature requests
 Please report issues at [https://github.com/mendixlabs/listview-filter/issues](https://github.com/mendixlabs/listview-filter/issues).
 
-## Development
-Prerequisite: Install git, node package manager, webpack CLI, grunt CLI, Karma CLI
-
-To contribute, fork and clone.
-
-    git clone https://github.com/mendixlabs/listview-filter.git
-
-The code is in typescript. Use a typescript IDE of your choice, like Visual Studio Code or WebStorm.
-
-To set up the development environment, run:
-
-    npm install
-
-Create a folder named dist in the project root.
-
-Create a Mendix test project in the dist folder and rename its root folder to MxTestProject. Changes to the widget code shall be automatically pushed to this test project. Or get the test project from [https://github.com/mendixlabs/listview-filter/releases/latest](https://github.com/mendixlabs/listview-filter/latest)
-
-    dist/MxTestProject
-
-To automatically compile, bundle and push code changes to the running test project, run:
-
-    grunt
-
-To run the project unit tests with code coverage, results can be found at dist/testresults/coverage/index.html, run:
-
-    npm test
-
-or run the test continuously during development:
-
-    karma start
+## Development and contribution
+Please follow [development guide](/development.md).
