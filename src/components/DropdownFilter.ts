@@ -1,4 +1,3 @@
-import * as classNames from "classnames";
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
 import { FilterProps } from "./DropdownFilterContainer";
@@ -17,7 +16,7 @@ interface DropdownFilterState {
 }
 // added to deal with typings issue of componentClass
 // needing to pass a className attribute on select options
-interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
+export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
     value: string;
     label: string;
 }
@@ -36,17 +35,11 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     render() {
         this.filters = this.applyEmptyFilter(this.props.filters);
-        return createElement("div",
-            {
-                className: classNames("widget-dropdown-filter", this.props.className),
-                style: this.props.style
-            },
-            createElement("select", {
-                className: "form-control",
-                onChange: this.handleOnChange,
-                value: this.state.selectedValue
-            }, this.createOptions())
-        );
+        return createElement("select", {
+            className: "form-control",
+            onChange: this.handleOnChange,
+            value: this.state.selectedValue
+        }, this.createOptions());
     }
 
     componentDidMount() {
