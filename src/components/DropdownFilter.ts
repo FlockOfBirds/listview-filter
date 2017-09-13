@@ -2,6 +2,7 @@ import * as classNames from "classnames";
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
 import { FilterProps } from "./DropdownFilterContainer";
+import "./ui/DropdownFilter.css";
 
 export interface DropdownFilterProps {
     defaultFilter: number;
@@ -62,19 +63,30 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     private createOptions(): Array<ReactElement<{}>> {
-        const options: Array<ReactElement<{}>> = this.filters.map(option => {
+        const options: Array<ReactElement<{}>> = this.filters.map((option, index) => {
             const optionAttributes: DropdownType = {
+                // placeholder option is at index 0
+                disabled: (index === 0) ? true : undefined,
                 label: option.caption,
                 value: option.selectedValue
             };
             return createElement("option", optionAttributes);
         });
-
         return options;
     }
 
     private applyEmptyFilter(filters: FilterProps[]): Display[] {
         const returnFilters: Display[] = [];
+        // Select...
+        returnFilters.push({
+            attribute: "",
+            attributeValue: "",
+            caption: "Select...",
+            constraint: "",
+            filterBy: "attribute",
+            selectedValue: "0"
+        });
+
         // empty
         returnFilters.push({
             attribute: "",

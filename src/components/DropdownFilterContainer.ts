@@ -65,7 +65,6 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
     }
 
     render() {
-        // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
         return createElement("div",
             {
                 className: classNames("widget-dropdown-filter")
@@ -148,46 +147,4 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
         });
         this.setState({ widgetAvailable: false, validationPassed: !validateMessage });
     }
-
-    // private validateProps(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean }) {
-    //     const widgetName = "DropdownFilter";
-    //     if (!props.filterNode) {
-    //         return `${widgetName}: unable to find a listview with to attach to`;
-    //     }
-
-    //     if (!(props.targetListView && props.targetListView._datasource)) {
-    //         return `${widgetName}: this Mendix version is incompatible`;
-    //     }
-
-    //     if (props.entity && !ValidateConfigs.itContains(props.entity, "/")) {
-    //         if (props.entity !== props.targetListView._datasource._entity) {
-    //             return `${widgetName}: supplied entity "${props.entity}" does not belong to list view data source`;
-    //         }
-    //     }
-
-    //     if (props.filters && props.filters.length) {
-    //         return `${widgetName}: should have atleast one filter`;
-    //     }
-
-    //     if (props.filters) {
-    //         const errorMessage: string[] = [];
-    //         props.filters.forEach((filter, index) => {
-    //             if (filter.filterBy === "XPath" && !filter.constraint) {
-    //                 errorMessage.push(`Filter position: {${index + 1 }} is missing XPath constraint`);
-    //             }
-    //             if (filter.filterBy === "attribute" && !filter.attributeValue) {
-    //                 errorMessage.push(`Filter position: {${index + 1 }} is missing a Value constraint`);
-    //             }
-    //         });
-    //         if (errorMessage.length) {
-    //             return `${widgetName} : ${errorMessage.join(", ")}`;
-    //         }
-    //     }
-
-    //     if (!isNaN(props.defaultFilter) && props.defaultFilter >= 0 && props.defaultFilter > props.filters.length) {
-    //         return `${widgetName}: Default value must be a number not more number of filters`;
-    //     }
-
-    //     return "";
-    // }
 }
