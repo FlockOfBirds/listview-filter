@@ -12,7 +12,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { widgetAvailable: true };
+        this.state = { listviewAvailable: true };
     }
 
     render() {
@@ -42,7 +42,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
         if (targetNode) {
             this.setState({ targetNode });
         }
-        this.setState({ widgetAvailable: true });
+        this.setState({ listviewAvailable: true });
     }
 
     private renderAlert() {
@@ -52,7 +52,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
             filters: this.props.filters,
             isModeler: true,
             targetListView: this.state.targetListView,
-            validate: !this.state.widgetAvailable
+            validate: !this.state.listviewAvailable
         });
 
         return createElement(Alert, {
@@ -63,19 +63,15 @@ export class preview extends Component<ContainerProps, ContainerState> {
     }
 
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
-        if (this.state.validationPassed) {
-            const defaultFilterIndex = this.props.filters.findIndex(filter => filter.isDefaultFilter);
+        const defaultFilterIndex = this.props.filters.findIndex(filter => filter.isDefaultFilter);
 
-            return createElement(DropdownFilter, {
-                defaultFilterIndex,
-                enableEmptyFilter: this.props.enableEmptyFilter,
-                filters: this.props.filters,
-                handleChange: () => { return; },
-                placeholder: this.props.placeholder
-            });
-        }
-
-        return null;
+        return createElement(DropdownFilter, {
+            defaultFilterIndex,
+            enableEmptyFilter: this.props.enableEmptyFilter,
+            filters: this.props.filters,
+            handleChange: () => { return; },
+            placeholder: this.props.placeholder
+        });
     }
 }
 

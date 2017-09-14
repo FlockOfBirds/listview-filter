@@ -48,7 +48,7 @@ export interface ListView extends mxui.widget._WidgetBase {
 }
 
 export interface ContainerState {
-    widgetAvailable: boolean;
+    listviewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
     validationPassed?: boolean;
@@ -60,7 +60,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { widgetAvailable: true };
+        this.state = { listviewAvailable: true };
         this.handleChange = this.handleChange.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
         dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.connectToListView));
@@ -83,7 +83,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
             filterNode: this.state.targetNode,
             filters: this.props.filters,
             targetListView: this.state.targetListView,
-            validate: !this.state.widgetAvailable
+            validate: !this.state.listviewAvailable
         });
 
         return createElement(Alert, {
@@ -151,6 +151,6 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
             targetListView,
             validate: true
         });
-        this.setState({ widgetAvailable: false, validationPassed: !validateMessage });
+        this.setState({ listviewAvailable: false, validationPassed: !validateMessage });
     }
 }
