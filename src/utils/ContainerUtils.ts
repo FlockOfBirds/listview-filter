@@ -18,11 +18,15 @@ export const parseStyle = (style = ""): {[key: string]: string} => {
     return {};
 };
 export class Utils {
-    static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean }): string {
+    static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean, isModeler?: boolean }): string {
         const widgetName = "dropdown-filter";
         // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
         if (!props.filterNode) {
             return `${widgetName}: unable to find a listview with to attach to`;
+        }
+
+        if (props.isModeler) {
+            return "";
         }
 
         if (!(props.targetListView && props.targetListView._datasource)) {

@@ -50,6 +50,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
             ...this.props as ContainerProps,
             filterNode: this.state.targetNode,
             filters: this.props.filters,
+            isModeler: true,
             targetListView: this.state.targetListView,
             validate: !this.state.widgetAvailable
         });
