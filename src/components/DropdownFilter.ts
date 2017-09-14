@@ -70,7 +70,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
                 label: option.caption,
                 value: option.selectedValue
             };
-            return createElement("option", optionAttributes);
+            return createElement("option", optionAttributes, option.caption);
         });
 
         return options;
