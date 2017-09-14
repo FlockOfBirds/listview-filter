@@ -4,32 +4,38 @@ import { FilterProps } from "./DropdownFilterContainer";
 import "./ui/DropdownFilter.css";
 
 export interface DropdownFilterProps {
-    defaultFilter: number;
-    className?: string;
+    defaultFilterIndex: number;
+    enableEmptyFilter: boolean;
     filters: FilterProps[];
     handleChange: (FilterProps) => void;
-    style?: {[key: string]: string; };
+    placeholder: string;
 }
 
 interface DropdownFilterState {
     selectedValue: string;
 }
-// added to deal with typings issue of componentClass
-// needing to pass a className attribute on select options
+
+// Added to deal with typings issue of componentClass, needing to pass a className attribute on select options
 export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
     value: string;
     label: string;
 }
-type Display = FilterProps & DropdownFilterState;
+
+type Display = Partial<FilterProps> & DropdownFilterState;
 
 export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilterState> {
-    // remap prop filters to dropdownfilters
+    // Remap prop filters to dropdownfilters
     private filters: Display[];
 
     constructor(props: DropdownFilterProps) {
         super(props);
-        // because select is a controlled component which has its own state
-        this.state = { selectedValue: `${this.props.defaultFilter}` };
+
+        // Should have state because select is a controlled component
+        this.state = {
+            selectedValue : this.props.defaultFilterIndex < 0
+                ? "0"
+                : `${this.props.defaultFilterIndex}`
+        };
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
@@ -44,7 +50,8 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     componentDidMount() {
         // initial state has selectedValue as defaultFilter's index
-        const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
+        const selectedValue = this.props.defaultFilterIndex < 0 ? "0" : `${this.props.defaultFilterIndex}`;
+        const selectedFilter = this.filters.find(filter => filter.selectedValue === selectedValue);
         this.props.handleChange(selectedFilter as FilterProps);
     }
 
@@ -58,38 +65,42 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     private createOptions(): Array<ReactElement<{}>> {
         const options: Array<ReactElement<{}>> = this.filters.map((option, index) => {
             const optionAttributes: DropdownType = {
-                // placeholder option is at index 0
+                // Placeholder option is at index 0
                 disabled: (index === 0) ? true : undefined,
                 label: option.caption,
                 value: option.selectedValue
             };
             return createElement("option", optionAttributes);
         });
+
         return options;
     }
 
     private applyEmptyFilter(filters: FilterProps[]): Display[] {
         const returnFilters: Display[] = [];
-        // Select...
+        // Placeholder text should be placed as the first filter option
         returnFilters.push({
             attribute: "",
             attributeValue: "",
-            caption: "Select...",
+            caption: this.props.placeholder,
             constraint: "",
             filterBy: "attribute",
             selectedValue: "0"
         });
 
-        // empty
-        returnFilters.push({
-            attribute: "",
-            attributeValue: "",
-            caption: "",
-            constraint: "",
-            filterBy: "attribute",
-            selectedValue: "0"
-        });
-        // remap prop filters to dropdownfilters
+        // Empty
+        if (this.props.enableEmptyFilter) {
+            returnFilters.push({
+                attribute: "",
+                attributeValue: "",
+                caption: "",
+                constraint: "",
+                filterBy: "attribute",
+                selectedValue: "0"
+            });
+        }
+
+        // Remap prop filters to dropdownfilters
         filters.forEach((filter, index) => {
             returnFilters.push({
                 ...filter,
@@ -100,7 +111,6 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
-        // event.currentTarget.value
         this.setState({
             selectedValue: event.currentTarget.value
         });

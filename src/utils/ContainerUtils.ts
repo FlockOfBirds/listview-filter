@@ -53,6 +53,9 @@ export class Utils {
                 return `${widgetName} : ${errorMessage.join(", ")}`;
             }
         }
+        if (props.filters.filter(filter => filter.isDefaultFilter).length > 1) {
+            return `${widgetName}: should only have one filter set as default`;
+        }
 
         if (!isNaN(props.defaultFilter) && props.defaultFilter >= 0 && props.defaultFilter > props.filters.length) {
             return `${widgetName}: Default-Filter value must be less or equal to maximum filter-count '${props.filters.length}'`;
@@ -65,16 +68,13 @@ export class Utils {
         return !!(targetListView && targetListView._datasource);
     }
 
-    static findTargetNode(props: ContainerProps, filterNode: HTMLElement): HTMLElement | null {
+    static findTargetNode(filterNode: HTMLElement): HTMLElement | null {
         let targetNode: HTMLElement | null = null ;
 
         while (!targetNode && filterNode) {
-            targetNode = props.targetListViewName
-                ? filterNode.querySelector(`.mx-name-${props.targetListViewName}`) as HTMLElement
-                : filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
-
+            targetNode = filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
             if (targetNode || filterNode.classList.contains("mx-incubator")
-                || filterNode.classList.contains("mx-offscreen")) {
+            || filterNode.classList.contains("mx-offscreen") || filterNode.isEqualNode(document)) {
                     break;
                 }
             filterNode = filterNode.parentNode as HTMLElement;

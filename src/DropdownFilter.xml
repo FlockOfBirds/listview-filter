@@ -2,7 +2,9 @@
 <widget id="com.mendix.widget.custom.dropdownfilter.DropdownFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Dropdown filter</name>
     <description>Filter Mendix List views using a dropdown</description>
-    <icon/>
+    <icon>
+        iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAAAXNSR0IArs4c6QAAAZ9JREFUKBWNkr9rwkAUx19+GM1voyg4umSTTM4dpFMpurk4V2mXjoVCCx0q3YVi/4UOFUqHCjp1cWzBUqpIZ0WXaE1KTPouFZGo0IPjvXf3/XzfHXdUPp8/HAwGqV6vB5ZlAQ4Wp0bTtMLzPEiS5MiybMdiMRujJQjCF0tRVKrVatUdx/Gh+XwOs5kNo9E3MEwIIRkURQFZloCYVCrFY+IKuVyuXKvV6qZpIjAD05zCZDIFluV8QNM0UFUVqtWLU+wGbKPRuMtkMkfpdBrG4zGKJ+iuoNUUOI6HeDwOiUQColGV+APqb2mSuK7b1nW9jPdAIQehEAs0TWEnFsLhMB6TgVLp4AzjM9H7ULfb7Xue1zYMoxyJRHyQYf4MRFGAYnH/Eu/+2Gw2P1YQSWzb7mNoZ7PZE9KNYSgfLhT2rrHjQ6fTeSe6XUPHjfOnpxdPFMWbZDJpBIX+8QKLn+v1cDh8Xa9Jvg0KajbqXZC3VLobBC7sgn6IeLFYzP8N4Xv5HfBr+XAQ3NoJH5sj3wXj1n0q6LKsrzCSvXucb8u1VfgFhT5/n4nGOh0AAAAASUVORK5CYII=
+    </icon>
     <properties>
         <property key="entity" type="entity">
             <caption>List view entity</caption>
@@ -14,13 +16,13 @@
             <category>Data source</category>
             <description/>
             <properties>
-                <property key="caption" type="string" required="false">
+                <property key="caption" type="string">
                     <caption>Caption</caption>
                     <category>General</category>
                     <description/>
                 </property>
                 <property key="filterBy" type="enumeration" defaultValue="attribute">
-                    <caption>Comparison</caption>
+                    <caption>Filter on</caption>
                     <category>General</category>
                     <description/>
                     <enumerationValues>
@@ -40,21 +42,35 @@
                     </attributeTypes>
                 </property>
                 <property key="attributeValue" type="string" required="false">
-                    <caption>Value</caption>
+                    <caption>Attribute value</caption>
                     <category>General</category>
                     <description/>
                 </property>
                 <property key="constraint" type="entityConstraint" required="false" entityProperty="../entity">
-                    <caption>Constraint</caption>
+                    <caption>XPath constraint</caption>
                     <category>General</category>
                     <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
                 </property>
+                <property key="isDefault" type="boolean" defaultValue="false">
+                    <caption>Default selected filter</caption>
+                    <category>General</category>
+                    <description>Only one filter can be set as default</description>
+                </property>
             </properties>
         </property>
-        <property key="defaultFilter" type="integer" defaultValue="0">
-            <caption>Default filter</caption>
-            <category>Data source</category>
-            <description>Position of filter-option to use during initial rendering of the widget</description>
+        <property key="enableEmptyFilter" type="boolean" defaultValue="true">
+            <caption>Enable empty filter</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="placeholder" type="translatableString">
+            <caption>Placeholder</caption>
+            <category>General</category>
+            <description>Used as filter placeholder when no default filter exists</description>
+            <translations>
+                <translation lang="en_US">Select...</translation>
+                <translation lang="nl_NL">Kiezen...</translation>
+            </translations>
         </property>
     </properties>
 </widget>

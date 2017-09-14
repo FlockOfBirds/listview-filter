@@ -18,9 +18,10 @@ interface WrapperProps {
 
 export interface ContainerProps extends WrapperProps {
     defaultFilter: number;
+    enableEmptyFilter: boolean;
     entity: string;
-    targetListViewName: string;
     filters: FilterProps[];
+    placeholder: string;
 }
 
 export interface FilterProps {
@@ -29,6 +30,7 @@ export interface FilterProps {
     attribute: string;
     attributeValue: string;
     constraint: string;
+    isDefaultFilter: boolean;
 }
 
 export type filterOptions = "attribute" | "XPath";
@@ -45,7 +47,7 @@ export interface ListView extends mxui.widget._WidgetBase {
     _entity: string;
 }
 
-export interface DropdownFilterState {
+export interface ContainerState {
     widgetAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
@@ -53,7 +55,7 @@ export interface DropdownFilterState {
     value?: string;
 }
 
-export default class DropdownFilterContainer extends Component<ContainerProps, DropdownFilterState> {
+export default class DropdownFilterContainer extends Component<ContainerProps, ContainerState> {
 
     constructor(props: ContainerProps) {
         super(props);
@@ -67,7 +69,8 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
     render() {
         return createElement("div",
             {
-                className: classNames("widget-dropdown-filter")
+                className: classNames("widget-dropdown-filter", this.props.class),
+                style: parseStyle(this.props.style)
             },
             this.renderAlert(),
             this.renderDropdownFilter()
@@ -80,7 +83,6 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
             filterNode: this.state.targetNode,
             filters: this.props.filters,
             targetListView: this.state.targetListView,
-            targetListViewName: this.props.targetListViewName,
             validate: !this.state.widgetAvailable
         });
 
@@ -93,12 +95,14 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
 
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
         if (this.state.validationPassed) {
+            const defaultFilterIndex = this.props.filters.findIndex(filter => filter.isDefaultFilter);
+
             return createElement(DropdownFilter, {
-                className: this.props.class,
-                defaultFilter: this.props.defaultFilter,
+                defaultFilterIndex,
+                enableEmptyFilter: this.props.enableEmptyFilter,
                 filters: this.props.filters,
                 handleChange: this.handleChange,
-                style: parseStyle(this.props.style)
+                placeholder: this.props.placeholder
             });
         }
 
@@ -107,7 +111,8 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
 
     private handleChange(selectedFilter: FilterProps) {
         const { targetListView } = this.state;
-
+        // To support multiple filters. We attach each dropdown-filter-widget's selected constraint
+        // On the listView's custom 'filter' object.
         if (targetListView && targetListView._datasource) {
             const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
             if (filterBy === "XPath") {
@@ -118,6 +123,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
                 targetListView.filter[this.props.friendlyId] = "";
             }
 
+            // Combine multiple-filter constraints into one and apply it to the listview
             const finalContraint = Object.keys(targetListView.filter)
                 .map(key => targetListView.filter[key])
                 .join("");
@@ -128,7 +134,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, D
 
     private connectToListView() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(this.props, filterNode);
+        const targetNode = Utils.findTargetNode(filterNode);
         let targetListView: ListView | null = null;
 
         if (targetNode) {

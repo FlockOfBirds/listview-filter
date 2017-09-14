@@ -2,22 +2,22 @@ import { ReactElement, createElement } from "react";
 import { shallow } from "enzyme";
 
 import { DropdownFilter, DropdownFilterProps, DropdownType } from "../DropdownFilter";
-import { parseStyle } from "../../utils/ContainerUtils";
 
 describe("DropdownFilter", () => {
     const renderDropdownFilter = (props: DropdownFilterProps) => shallow(createElement(DropdownFilter, props));
     const dropdownFilterProps: DropdownFilterProps = {
-        className: "widget-dropdown-filter",
-        defaultFilter: 1,
+        defaultFilterIndex: 1,
+        enableEmptyFilter: true,
         filters: [ {
             attribute: "Code",
             attributeValue: "256",
             caption: "Country",
             constraint: "",
-            filterBy: "attribute"
+            filterBy: "attribute",
+            isDefaultFilter: false
         } ],
         handleChange: jasmine.any(Function) as any,
-        style: parseStyle("html{}")
+        placeholder: "Select..."
     };
     const optionAttributes: DropdownType = {
         disabled: true,
@@ -45,16 +45,18 @@ describe("DropdownFilter", () => {
     describe("select", () => {
         it("changes value", (done) => {
             const props: DropdownFilterProps = {
-                className: "",
-                defaultFilter: 1,
+                defaultFilterIndex: 1,
+                enableEmptyFilter: true,
                 filters: [ {
                     attribute: "Code",
                     attributeValue: "256",
                     caption: "Country",
                     constraint: "",
-                    filterBy: "attribute"
+                    filterBy: "attribute",
+                    isDefaultFilter: false
                 } ],
-                handleChange: value => value
+                handleChange: value => value,
+                placeholder: "Select..."
             };
             spyOn(props, "handleChange").and.callThrough();
             const wrapper = renderDropdownFilter(props);
@@ -78,16 +80,18 @@ describe("DropdownFilter", () => {
         it("updates when the select option changes", (done) => {
             const newValue = "Uganda";
             const props: DropdownFilterProps = {
-                className: "",
-                defaultFilter: 1,
+                defaultFilterIndex: 1,
+                enableEmptyFilter: true,
                 filters: [ {
                     attribute: "Code",
                     attributeValue: "256",
                     caption: "Country",
                     constraint: "",
-                    filterBy: "attribute"
+                    filterBy: "attribute",
+                    isDefaultFilter: false
                 } ],
-                handleChange: value => value
+                handleChange: value => value,
+                placeholder: "Select..."
             };
             spyOn(props, "handleChange").and.callThrough();
             const wrapper = renderDropdownFilter(props);
