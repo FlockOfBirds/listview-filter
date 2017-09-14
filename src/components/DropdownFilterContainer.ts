@@ -95,7 +95,12 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
         if (this.state.validationPassed) {
-            const defaultFilterIndex = this.props.filters.findIndex(filter => filter.isDefaultFilter);
+            let defaultFilterIndex = 0;
+            this.props.filters.forEach((filter, index) => {
+                if (filter.isDefaultFilter) {
+                    defaultFilterIndex = index;
+                }
+            });
 
             return createElement(DropdownFilter, {
                 defaultFilterIndex,

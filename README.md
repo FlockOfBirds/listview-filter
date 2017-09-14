@@ -4,11 +4,11 @@
 [![codecov](https://codecov.io/gh/mendixlabs/listview-filter/branch/master/graph/badge.svg)](https://codecov.io/gh/mendixlabs/listview-filter)
 
 # Dropdown filter
-Filter mendix List views using a dropdown
+Filter mendix list views using a dropdown
 
 ## Features
-* Filter items with in a listview by an attribute
-* Filter items with in a listview by XPath
+* Filter items by an attribute
+* Filter items by XPath
 * Select a filter from a list of options
 * Set a default filter option
 
@@ -19,12 +19,12 @@ Mendix 7.6
 [https://dropdownfilter.mxapps.io/](https://dropdownfilter.mxapps.io/)
 
 ## Usage
-The List view entity in the `Data source` tab is a requires property.
+The list view entity in the `Data source` tab is a required property.
 ![Data source](/assets/Datasource.png)
 Add a new filter with a caption and choose comparison type.
 ![Filters](/assets/Filters.png)
-When filtering by `Attribute`, select an attribute and input a value to filter by, while when filtering by `XPath`,
-input a constraint to filter by.
+When filtering by `Attribute`, select an attribute and input a value to filter by
+When filtering by `XPath`, input a constraint to filter by.
 ![Constraint](/assets/Constraint.png)
 
 ## Issues, suggestions and feature requests

@@ -138,7 +138,8 @@
       150
     ],
     "arrow-parens": false,
-    "no-namespace": false
+    "no-namespace": false,
+    "array-type": false
   },
   "jsRules": {
     "trailing-comma": [

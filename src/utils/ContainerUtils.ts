@@ -17,6 +17,7 @@ export const parseStyle = (style = ""): {[key: string]: string} => {
 
     return {};
 };
+
 export class Utils {
     static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean}): string {
         const widgetName = "dropdown-filter";

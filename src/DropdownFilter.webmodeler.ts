@@ -62,7 +62,12 @@ export class preview extends Component<ContainerProps, ContainerState> {
     }
 
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
-        const defaultFilterIndex = this.props.filters.findIndex(filter => filter.isDefaultFilter);
+        let defaultFilterIndex = 0;
+        this.props.filters.forEach((filter, index) => {
+            if (filter.isDefaultFilter) {
+                defaultFilterIndex = index;
+            }
+        });
 
         return createElement(DropdownFilter, {
             defaultFilterIndex,

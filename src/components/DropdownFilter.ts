@@ -17,6 +17,7 @@ interface DropdownFilterState {
 
 // Added to deal with typings issue of componentClass, needing to pass a className attribute on select options
 export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
+    key: string;
     value: string;
     label: string;
 }
@@ -62,18 +63,15 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         }
     }
 
-    private createOptions(): Array<ReactElement<{}>> {
-        const options: Array<ReactElement<{}>> = this.filters.map((option, index) => {
-            const optionAttributes: DropdownType = {
-                // Placeholder option is at index 0
-                disabled: (index === 0) ? true : undefined,
-                label: option.caption,
-                value: option.selectedValue
-            };
-            return createElement("option", optionAttributes, option.caption);
-        });
-
-        return options;
+    private createOptions(): ReactElement<{}>[] {
+        return this.filters.map((option, index) => createElement("option", {
+            // Placeholder option is at index 0
+            className: "",
+            disabled: (index === 0) ? true : undefined,
+            key: index,
+            label: option.caption,
+            value: option.selectedValue
+        }, option.caption));
     }
 
     private applyEmptyFilter(filters: FilterProps[]): Display[] {

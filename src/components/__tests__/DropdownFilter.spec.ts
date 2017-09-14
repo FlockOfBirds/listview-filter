@@ -21,10 +21,11 @@ describe("DropdownFilter", () => {
     };
     const optionAttributes: DropdownType = {
         disabled: true,
+        key: "1",
         label: "Select...",
         value: "0"
     };
-    const options: Array<ReactElement<{}>> = [
+    const options: ReactElement<{}>[] = [
         createElement("option", optionAttributes),
         createElement("option", optionAttributes),
         createElement("option", optionAttributes)
