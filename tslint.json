@@ -139,7 +139,13 @@
     ],
     "arrow-parens": false,
     "no-namespace": false,
-    "array-type": false
+    "array-type": false,
+    "no-submodule-imports": [
+      true,
+      "dijit/registry",
+      "dojo/_base/lang",
+      "dojo/_base/connect"
+    ]
   },
   "jsRules": {
     "trailing-comma": [
