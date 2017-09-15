@@ -8,12 +8,21 @@
     <properties>
         <property key="entity" type="entity">
             <caption>List view entity</caption>
-            <category>Data source</category>
+            <category>General</category>
             <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
+        </property>
+        <property key="placeholder" type="translatableString">
+            <caption>Placeholder</caption>
+            <category>General</category>
+            <description>Used as filter placeholder when no default filter exists</description>
+            <translations>
+                <translation lang="en_US">Select...</translation>
+                <translation lang="nl_NL">Kiezen...</translation>
+            </translations>
         </property>
         <property key="filters" type="object" isList="true">
             <caption>Filters</caption>
-            <category>Data source</category>
+            <category>Filters</category>
             <description/>
             <properties>
                 <property key="caption" type="translatableString">
@@ -60,17 +69,8 @@
         </property>
         <property key="enableEmptyFilter" type="boolean" defaultValue="true">
             <caption>Enable empty filter</caption>
-            <category>General</category>
+            <category>Filters</category>
             <description/>
-        </property>
-        <property key="placeholder" type="translatableString">
-            <caption>Placeholder</caption>
-            <category>General</category>
-            <description>Used as filter placeholder when no default filter exists</description>
-            <translations>
-                <translation lang="en_US">Select...</translation>
-                <translation lang="nl_NL">Kiezen...</translation>
-            </translations>
         </property>
     </properties>
 </widget>
