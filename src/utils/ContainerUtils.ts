@@ -54,12 +54,8 @@ export class Utils {
                 return `${widgetName} : ${errorMessage.join(", ")}`;
             }
         }
-        if (props.filters.filter(filter => filter.isDefaultFilter).length > 1) {
+        if (props.filters.filter(filter => filter.isDefault).length > 1) {
             return `${widgetName}: should only have one filter set as default`;
-        }
-
-        if (!isNaN(props.defaultFilter) && props.defaultFilter >= 0 && props.defaultFilter > props.filters.length) {
-            return `${widgetName}: Default-Filter value must be less or equal to maximum filter-count '${props.filters.length}'`;
         }
 
         return "";

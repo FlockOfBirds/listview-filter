@@ -33,9 +33,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
         // Should have state because select is a controlled component
         this.state = {
-            selectedValue : this.props.defaultFilterIndex < 0
-                ? "0"
-                : `${this.props.defaultFilterIndex}`
+            selectedValue : this.getSelectedIndex() // This is because we're adding an additional empty filter
         };
         this.handleOnChange = this.handleOnChange.bind(this);
     }
@@ -51,7 +49,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     componentDidMount() {
         // initial state has selectedValue as defaultFilter's index
-        const selectedValue = this.props.defaultFilterIndex < 0 ? "0" : `${this.props.defaultFilterIndex}`;
+        const selectedValue = this.getSelectedIndex();
         const selectedFilter = this.filters.find(filter => filter.selectedValue === selectedValue);
         this.props.handleChange(selectedFilter as FilterProps);
     }
@@ -60,6 +58,15 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         if (prevState.selectedValue !== this.state.selectedValue) {
             const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
             this.props.handleChange(selectedFilter as FilterProps);
+        }
+    }
+
+    private getSelectedIndex() {
+        if (this.props.defaultFilterIndex < 0) {
+            return "0";
+        }
+        if (this.props.enableEmptyFilter || this.props.defaultFilterIndex >= 0) {
+            return `${this.props.defaultFilterIndex + 1}`;
         }
     }
 

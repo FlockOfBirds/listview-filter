@@ -17,7 +17,6 @@ interface WrapperProps {
 }
 
 export interface ContainerProps extends WrapperProps {
-    defaultFilter: number;
     enableEmptyFilter: boolean;
     entity: string;
     filters: FilterProps[];
@@ -30,7 +29,7 @@ export interface FilterProps {
     attribute: string;
     attributeValue: string;
     constraint: string;
-    isDefaultFilter: boolean;
+    isDefault: boolean;
 }
 
 export type filterOptions = "attribute" | "XPath";
@@ -52,7 +51,6 @@ export interface ContainerState {
     targetListView?: ListView;
     targetNode?: HTMLElement;
     validationPassed?: boolean;
-    value?: string;
 }
 
 export default class DropdownFilterContainer extends Component<ContainerProps, ContainerState> {
@@ -95,12 +93,8 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
         if (this.state.validationPassed) {
-            let defaultFilterIndex = 0;
-            this.props.filters.forEach((filter, index) => {
-                if (filter.isDefaultFilter) {
-                    defaultFilterIndex = index;
-                }
-            });
+            const { filters } = this.props;
+            const defaultFilterIndex = filters.indexOf(filters.filter(value => value.isDefault)[0]);
 
             return createElement(DropdownFilter, {
                 defaultFilterIndex,

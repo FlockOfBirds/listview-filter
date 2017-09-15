@@ -14,7 +14,7 @@ describe("DropdownFilter", () => {
             caption: "Country",
             constraint: "",
             filterBy: "attribute",
-            isDefaultFilter: false
+            isDefault: false
         } ],
         handleChange: jasmine.any(Function) as any,
         placeholder: "Select..."
@@ -54,7 +54,7 @@ describe("DropdownFilter", () => {
                     caption: "Country",
                     constraint: "",
                     filterBy: "attribute",
-                    isDefaultFilter: false
+                    isDefault: false
                 } ],
                 handleChange: value => value,
                 placeholder: "Select..."
@@ -89,7 +89,7 @@ describe("DropdownFilter", () => {
                     caption: "Country",
                     constraint: "",
                     filterBy: "attribute",
-                    isDefaultFilter: false
+                    isDefault: false
                 } ],
                 handleChange: value => value,
                 placeholder: "Select..."
