@@ -11,10 +11,15 @@
             <category>General</category>
             <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
         </property>
+        <property key="enableEmptyFilter" type="boolean" defaultValue="true">
+            <caption>Enable empty filter</caption>
+            <category>General</category>
+            <description>Adds a filter option for clearing the filters on the list view. If no "Default selected filter" is set, the "Empty filter" is selected</description>
+        </property>
         <property key="placeholder" type="translatableString">
             <caption>Placeholder</caption>
             <category>General</category>
-            <description>Used as filter placeholder when no default filter exists</description>
+            <description>Placeholder shown when no filter is select. Only relevant when empty filter is allowed</description>
             <translations>
                 <translation lang="en_US">Select...</translation>
                 <translation lang="nl_NL">Kiezen...</translation>
@@ -29,6 +34,10 @@
                     <caption>Caption</caption>
                     <category>General</category>
                     <description/>
+                    <translations>
+                        <translation lang="en_US"/>
+                        <translation lang="nl_NL"/>
+                    </translations>
                 </property>
                 <property key="filterBy" type="enumeration" defaultValue="attribute">
                     <caption>Filter on</caption>
@@ -63,14 +72,9 @@
                 <property key="isDefault" type="boolean" defaultValue="false">
                     <caption>Default selected filter</caption>
                     <category>General</category>
-                    <description>Only one filter can be set as default</description>
+                    <description>Only one filter can be set as default. If no "Default selected filter" is set, the first filter is selected, unless "Enable empty filter" is enabled</description>
                 </property>
             </properties>
-        </property>
-        <property key="enableEmptyFilter" type="boolean" defaultValue="true">
-            <caption>Enable empty filter</caption>
-            <category>Filters</category>
-            <description/>
         </property>
     </properties>
 </widget>
