@@ -62,8 +62,8 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     private getSelectedIndex() {
-        if (this.props.defaultFilterIndex < 0) {
-            return "0";
+        if (this.props.defaultFilterIndex < 0 && !this.props.enableEmptyFilter) {
+            return "1";
         }
         if (this.props.enableEmptyFilter || this.props.defaultFilterIndex >= 0) {
             return `${this.props.defaultFilterIndex + 1}`;
@@ -98,7 +98,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
             returnFilters.push({
                 attribute: "",
                 attributeValue: "",
-                caption: "",
+                caption: this.props.placeholder,
                 constraint: "",
                 filterBy: "attribute",
                 selectedValue: "0"
