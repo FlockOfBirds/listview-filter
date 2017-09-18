@@ -1,13 +1,13 @@
 import { Component, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
-import * as classNames from "classnames";
-import * as dijitRegistry from "dijit/registry";
-import * as dojoConnect from "dojo/_base/connect";
-import * as dojoLang from "dojo/_base/lang";
 
 import { Alert } from "./Alert";
 import { DropdownFilter, DropdownFilterProps } from "./DropdownFilter";
 import { Utils, parseStyle } from "../utils/ContainerUtils";
+
+import * as classNames from "classnames";
+import * as dijitRegistry from "dijit/registry";
+import * as dojoConnect from "dojo/_base/connect";
 
 interface WrapperProps {
     class: string;
@@ -60,8 +60,9 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
         this.state = { listviewAvailable: true };
         this.handleChange = this.handleChange.bind(this);
+        this.connectToListView = this.connectToListView.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
-        dojoConnect.connect(props.mxform, "onNavigation", this, dojoLang.hitch(this, this.connectToListView));
+        dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView);
     }
 
     render() {
@@ -79,7 +80,6 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
         const errorMessage = Utils.validate({
             ...this.props as ContainerProps,
             filterNode: this.state.targetNode,
-            filters: this.props.filters,
             targetListView: this.state.targetListView,
             validate: !this.state.listviewAvailable
         });
@@ -87,14 +87,13 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-dropdown-filter-alert",
-            message: errorMessage ? errorMessage : null
+            message: errorMessage
         });
     }
 
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
         if (this.state.validationPassed) {
-            const { filters } = this.props;
-            const defaultFilterIndex = filters.indexOf(filters.filter(value => value.isDefault)[0]);
+            const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
 
             return createElement(DropdownFilter, {
                 defaultFilterIndex,
@@ -123,10 +122,10 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
             }
 
             // Combine multiple-filter constraints into one and apply it to the listview
-            const finalContraint = Object.keys(targetListView.filter)
+            const finalConstraint = Object.keys(targetListView.filter)
                 .map(key => targetListView.filter[key])
                 .join("");
-            targetListView._datasource._constraints = finalContraint;
+            targetListView._datasource._constraints = finalConstraint;
             targetListView.update();
         }
     }

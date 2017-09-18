@@ -57,7 +57,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-dropdown-filter-alert",
-            message: errorMessage ? errorMessage : null
+            message: errorMessage
         });
     }
 
@@ -86,11 +86,17 @@ export function getVisibleProperties(valueMap: ContainerProps, visibilityMap: an
             visibilityMap.filters.filterBy = true;
             visibilityMap.filters.value = true;
             visibilityMap.filters.constraint = false;
+            if (this.enableEmptyFilter === false) {
+                visibilityMap.filter.caption = false;
+            }
         } else if (filterAttribute.filterBy === "XPath") {
             visibilityMap.filters.attribute = false;
-            visibilityMap.filters.filterBy = false;
+            visibilityMap.filters.filterBy = true;
             visibilityMap.filters.value = false;
             visibilityMap.filters.constraint = true;
+            if (!this.enableEmptyFilter === false) {
+                visibilityMap.filter.caption = false;
+            }
         }
     });
 

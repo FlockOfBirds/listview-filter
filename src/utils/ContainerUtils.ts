@@ -27,7 +27,7 @@ export class Utils {
         }
 
         if (!(props.targetListView && props.targetListView._datasource)) {
-            return `${widgetName}: this Mendix version is incompatible`;
+            return `${widgetName}: This Mendix version is incompatible`;
         }
 
         if (props.entity && !Utils.itContains(props.entity, "/")) {
