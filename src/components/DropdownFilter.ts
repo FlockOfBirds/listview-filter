@@ -14,7 +14,6 @@ export interface DropdownFilterProps {
 interface DropdownFilterState {
     selectedValue: string;
 }
-
 // Added to deal with typings issue of componentClass, needing to pass a className attribute on select options
 export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
     key: string;
@@ -30,7 +29,6 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     constructor(props: DropdownFilterProps) {
         super(props);
-
         // Should have state because select is a controlled component
         this.state = {
             selectedValue : this.getSelectedIndex() // This is because we're adding an additional empty filter
@@ -72,9 +70,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     private createOptions(): ReactElement<{}>[] {
         return this.filters.map((option, index) => createElement("option", {
-            // Placeholder option is at index 0
             className: "",
-            disabled: (index === 0) ? true : undefined,
             key: index,
             label: option.caption,
             value: option.selectedValue
@@ -83,16 +79,6 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
 
     private applyEmptyFilter(filters: FilterProps[]): Display[] {
         const returnFilters: Display[] = [];
-        // Placeholder text should be placed as the first filter option
-        returnFilters.push({
-            attribute: "",
-            attributeValue: "",
-            caption: this.props.placeholder,
-            constraint: "",
-            filterBy: "attribute",
-            selectedValue: "0"
-        });
-
         // Empty
         if (this.props.enableEmptyFilter) {
             returnFilters.push({
@@ -104,7 +90,6 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
                 selectedValue: "0"
             });
         }
-
         // Remap prop filters to dropdownfilters
         filters.forEach((filter, index) => {
             returnFilters.push({

@@ -12,14 +12,14 @@
             <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
         </property>
         <property key="enableEmptyFilter" type="boolean" defaultValue="true">
-            <caption>Enable empty filter</caption>
+            <caption>No filter option</caption>
             <category>General</category>
             <description>Adds a filter option for clearing the filters on the list view. If no "Default selected filter" is set, the "Empty filter" is selected</description>
         </property>
         <property key="placeholder" type="translatableString">
-            <caption>Placeholder</caption>
+            <caption>No filter option text</caption>
             <category>General</category>
-            <description>Placeholder shown when no filter is select. Only relevant when empty filter is allowed</description>
+            <description>Text shown when no filter is select. Only relevant when empty filter is allowed</description>
             <translations>
                 <translation lang="en_US">Select...</translation>
                 <translation lang="nl_NL">Kiezen...</translation>
