@@ -19,10 +19,12 @@ describe("DropdownFilter", () => {
         handleChange: jasmine.any(Function) as any,
         placeholder: "Select..."
     };
+
     const optionAttributes: DropdownType = {
+        className: "",
         disabled: true,
         key: "1",
-        label: "Select...",
+        label: "Select a filter",
         value: "0"
     };
     const options: ReactElement<{}>[] = [
@@ -38,7 +40,7 @@ describe("DropdownFilter", () => {
             createElement("select", {
                 className: "form-control",
                 onChange: jasmine.any(Function) as any,
-                value: "1"
+                value: "2"
             }, options)
             );
     });
@@ -56,10 +58,9 @@ describe("DropdownFilter", () => {
                     filterBy: "attribute",
                     isDefault: false
                 } ],
-                handleChange: value => value,
+                handleChange: jasmine.createSpy("onClick"),
                 placeholder: "Select..."
             };
-            spyOn(props, "handleChange").and.callThrough();
             const wrapper = renderDropdownFilter(props);
             const select: any = wrapper.find("select");
 
