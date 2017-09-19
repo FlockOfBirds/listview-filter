@@ -14,6 +14,7 @@ interface WrapperProps {
     style: string;
     friendlyId: string;
     mxform?: mxui.lib.form._FormBase;
+    mxObject: mendix.lib.MxObject;
 }
 
 export interface ContainerProps extends WrapperProps {
@@ -60,8 +61,8 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
         this.state = { listviewAvailable: true };
         this.handleChange = this.handleChange.bind(this);
-        this.connectToListView = this.connectToListView.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
+        this.connectToListView = this.connectToListView.bind(this);
         dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView);
     }
 
@@ -94,6 +95,11 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
     private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
         if (this.state.validationPassed) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
+            if (this.props.mxObject) {
+            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(`'[%CurrentObject%]'`,
+                    this.props.mxObject.getGuid()
+                ));
+            }
 
             return createElement(DropdownFilter, {
                 defaultFilterIndex,
@@ -120,7 +126,6 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
             } else {
                 targetListView.filter[this.props.friendlyId] = "";
             }
-
             // Combine multiple-filter constraints into one and apply it to the listview
             const finalConstraint = Object.keys(targetListView.filter)
                 .map(key => targetListView.filter[key])
