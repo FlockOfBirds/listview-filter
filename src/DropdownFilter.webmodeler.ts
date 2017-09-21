@@ -49,7 +49,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
         const errorMessage = Utils.validate({
             ...this.props as ContainerProps,
             filterNode: this.state.targetNode,
-            filters: this.props.filters,
+            isModeler: true,
             targetListView: this.state.targetListView,
             validate: !this.state.listviewAvailable
         });
@@ -67,10 +67,8 @@ export class preview extends Component<ContainerProps, ContainerState> {
 
         return createElement(DropdownFilter, {
             defaultFilterIndex,
-            enableEmptyFilter: this.props.enableEmptyFilter,
             filters: this.props.filters,
-            handleChange: () => { return; },
-            placeholder: this.props.placeholder
+            handleChange: () => { return; }
         });
     }
 }
@@ -86,17 +84,11 @@ export function getVisibleProperties(valueMap: ContainerProps, visibilityMap: an
             visibilityMap.filters.filterBy = true;
             visibilityMap.filters.value = true;
             visibilityMap.filters.constraint = false;
-            if (this.enableEmptyFilter === false) {
-                visibilityMap.filter.caption = false;
-            }
         } else if (filterAttribute.filterBy === "XPath") {
             visibilityMap.filters.attribute = false;
             visibilityMap.filters.filterBy = true;
             visibilityMap.filters.value = false;
             visibilityMap.filters.constraint = true;
-            if (!this.enableEmptyFilter === false) {
-                visibilityMap.filter.caption = false;
-            }
         }
     });
 

@@ -7,7 +7,6 @@ describe("DropdownFilter", () => {
     const renderDropdownFilter = (props: DropdownFilterProps) => shallow(createElement(DropdownFilter, props));
     const dropdownFilterProps: DropdownFilterProps = {
         defaultFilterIndex: 1,
-        enableEmptyFilter: true,
         filters: [ {
             attribute: "Code",
             attributeValue: "256",
@@ -16,8 +15,7 @@ describe("DropdownFilter", () => {
             filterBy: "attribute",
             isDefault: false
         } ],
-        handleChange: jasmine.any(Function) as any,
-        placeholder: "Select..."
+        handleChange: jasmine.any(Function) as any
     };
 
     const optionAttributes: DropdownType = {
@@ -49,7 +47,6 @@ describe("DropdownFilter", () => {
         it("changes value", (done) => {
             const props: DropdownFilterProps = {
                 defaultFilterIndex: 1,
-                enableEmptyFilter: true,
                 filters: [ {
                     attribute: "Code",
                     attributeValue: "256",
@@ -58,8 +55,7 @@ describe("DropdownFilter", () => {
                     filterBy: "attribute",
                     isDefault: false
                 } ],
-                handleChange: jasmine.createSpy("onClick"),
-                placeholder: "Select..."
+                handleChange: jasmine.createSpy("onClick")
             };
             const wrapper = renderDropdownFilter(props);
             const select: any = wrapper.find("select");
@@ -83,7 +79,6 @@ describe("DropdownFilter", () => {
             const newValue = "Uganda";
             const props: DropdownFilterProps = {
                 defaultFilterIndex: 1,
-                enableEmptyFilter: true,
                 filters: [ {
                     attribute: "Code",
                     attributeValue: "256",
@@ -92,8 +87,7 @@ describe("DropdownFilter", () => {
                     filterBy: "attribute",
                     isDefault: false
                 } ],
-                handleChange: value => value,
-                placeholder: "Select..."
+                handleChange: value => value
             };
             spyOn(props, "handleChange").and.callThrough();
             const wrapper = renderDropdownFilter(props);

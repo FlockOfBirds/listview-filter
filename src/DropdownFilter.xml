@@ -11,26 +11,12 @@
             <category>General</category>
             <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
         </property>
-        <property key="enableEmptyFilter" type="boolean" defaultValue="true">
-            <caption>No filter option</caption>
-            <category>General</category>
-            <description>Adds a filter option for clearing the filters on the list view. If no "Default selected filter" is set, the "Empty filter" is selected</description>
-        </property>
-        <property key="placeholder" type="translatableString">
-            <caption>No filter option text</caption>
-            <category>General</category>
-            <description>Text shown when no filter is select. Only relevant when empty filter is allowed</description>
-            <translations>
-                <translation lang="en_US">Select...</translation>
-                <translation lang="nl_NL">Kiezen...</translation>
-            </translations>
-        </property>
         <property key="filters" type="object" isList="true">
             <caption>Filters</caption>
             <category>Filters</category>
             <description/>
             <properties>
-                <property key="caption" type="translatableString">
+                <property key="caption" type="translatableString" required="false">
                     <caption>Caption</caption>
                     <category>General</category>
                     <description/>
@@ -39,11 +25,12 @@
                         <translation lang="nl_NL"/>
                     </translations>
                 </property>
-                <property key="filterBy" type="enumeration" defaultValue="attribute">
+                <property key="filterBy" type="enumeration" defaultValue="none">
                     <caption>Filter on</caption>
                     <category>General</category>
                     <description/>
                     <enumerationValues>
+                        <enumerationValue key="none">None</enumerationValue>
                         <enumerationValue key="attribute">Attribute</enumerationValue>
                         <enumerationValue key="XPath">XPath</enumerationValue>
                     </enumerationValues>
@@ -70,9 +57,9 @@
                     <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
                 </property>
                 <property key="isDefault" type="boolean" defaultValue="false">
-                    <caption>Default selected filter</caption>
+                    <caption>Selected by default</caption>
                     <category>General</category>
-                    <description>Only one filter can be set as default. If no "Default selected filter" is set, the first filter is selected, unless "Enable empty filter" is enabled</description>
+                    <description>Only one filter can be set as default. If no "Selected by default" is set, the first filter is selected, unless "Enable empty filter" is enabled</description>
                 </property>
             </properties>
         </property>

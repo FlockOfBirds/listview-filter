@@ -5,10 +5,8 @@ import "./ui/DropdownFilter.css";
 
 export interface DropdownFilterProps {
     defaultFilterIndex: number;
-    enableEmptyFilter: boolean;
     filters: FilterProps[];
     handleChange: (FilterProps) => void;
-    placeholder: string;
 }
 
 interface DropdownFilterState {
@@ -31,13 +29,13 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         super(props);
         // Should have state because select is a controlled component
         this.state = {
-            selectedValue : this.getSelectedIndex() // This is because we're adding an additional empty filter
+            selectedValue : this.getSelectedIndex()
         };
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     render() {
-        this.filters = this.applyEmptyFilter(this.props.filters);
+        this.filters = this.applyFilter(this.props.filters);
         return createElement("select", {
             className: "form-control",
             onChange: this.handleOnChange,
@@ -60,10 +58,10 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
     }
 
     private getSelectedIndex() {
-        if (this.props.defaultFilterIndex < 0 && !this.props.enableEmptyFilter) {
+        if (this.props.defaultFilterIndex < 0) {
             return "1";
         }
-        if (this.props.enableEmptyFilter || this.props.defaultFilterIndex >= 0) {
+        if (this.props.defaultFilterIndex >= 0) {
             return `${this.props.defaultFilterIndex + 1}`;
         }
     }
@@ -77,19 +75,8 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         }, option.caption));
     }
 
-    private applyEmptyFilter(filters: FilterProps[]): Display[] {
+    private applyFilter(filters: FilterProps[]): Display[] {
         const returnFilters: Display[] = [];
-        // Empty
-        if (this.props.enableEmptyFilter) {
-            returnFilters.push({
-                attribute: "",
-                attributeValue: "",
-                caption: this.props.placeholder,
-                constraint: "",
-                filterBy: "attribute",
-                selectedValue: "0"
-            });
-        }
         // Remap prop filters to dropdownfilters
         filters.forEach((filter, index) => {
             returnFilters.push({

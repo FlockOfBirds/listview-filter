@@ -18,10 +18,8 @@ interface WrapperProps {
 }
 
 export interface ContainerProps extends WrapperProps {
-    enableEmptyFilter: boolean;
     entity: string;
     filters: FilterProps[];
-    placeholder: string;
 }
 
 export interface FilterProps {
@@ -33,7 +31,7 @@ export interface FilterProps {
     isDefault: boolean;
 }
 
-export type filterOptions = "attribute" | "XPath";
+export type filterOptions = "none" | "attribute" | "XPath";
 type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
 
 export interface ListView extends mxui.widget._WidgetBase {
@@ -103,10 +101,8 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
             return createElement(DropdownFilter, {
                 defaultFilterIndex,
-                enableEmptyFilter: this.props.enableEmptyFilter,
                 filters: this.props.filters,
-                handleChange: this.handleChange,
-                placeholder: this.props.placeholder
+                handleChange: this.handleChange
             });
         }
 
@@ -121,7 +117,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
             const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
             if (filterBy === "XPath") {
                 targetListView.filter[this.props.friendlyId] = constraint;
-            } else if (attributeValue) {
+            } else if (filterBy === "attribute") {
                 targetListView.filter[this.props.friendlyId] = `[contains(${attribute},'${attributeValue}')]`;
             } else {
                 targetListView.filter[this.props.friendlyId] = "";

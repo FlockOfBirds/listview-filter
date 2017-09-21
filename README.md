@@ -20,12 +20,17 @@ Mendix 7.6
 
 ## Usage
 The list view entity in the `Data source` tab is a required property.
-![Data source](/assets/Datasource.png)
+
+![Data source](assets/Datasource.png)
+
 Add a new filter with a caption and choose comparison type.
-![Filters](/assets/Filters.png)
+
+![Filters](assets/Filters.png)
+
 When filtering by `Attribute`, select an attribute and input a value to filter by
 When filtering by `XPath`, input a constraint to filter by.
-![Constraint](/assets/Constraint.png)
+
+![Constraint](assets/Constraint.png)
 
 ## Issues, suggestions and feature requests
 Please report issues at [https://github.com/mendixlabs/listview-filter/issues](https://github.com/mendixlabs/listview-filter/issues).
