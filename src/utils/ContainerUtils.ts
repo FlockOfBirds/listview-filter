@@ -19,15 +19,17 @@ export const parseStyle = (style = ""): {[key: string]: string} => {
 };
 
 export class Utils {
-    static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean}): string {
+    static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean, isModeler?: boolean}): string {
         const widgetName = "dropdown-filter";
         // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
         if (!props.filterNode) {
             return `${widgetName}: unable to find a listview with to attach to`;
         }
 
-        if (!(props.targetListView && props.targetListView._datasource)) {
-            return `${widgetName}: This Mendix version is incompatible`;
+        if (props.isModeler) {
+            return "";
+        } else if (!(props.targetListView && props.targetListView._datasource)) {
+            return `${widgetName}: unable to find a listview with to attach to`;
         }
 
         if (props.entity && !Utils.itContains(props.entity, "/")) {
@@ -37,7 +39,7 @@ export class Utils {
         }
 
         if (props.filters && !props.filters.length) {
-            return `${widgetName}: should have atleast one filter`;
+            return `${widgetName}: should have at least one filter`;
         }
 
         if (props.filters) {
@@ -71,9 +73,10 @@ export class Utils {
         while (!targetNode && filterNode) {
             targetNode = filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
             if (targetNode || filterNode.classList.contains("mx-incubator")
-            || filterNode.classList.contains("mx-offscreen") || filterNode.isEqualNode(document)) {
-                    break;
-                }
+                || filterNode.classList.contains("mx-offscreen") || filterNode.isEqualNode(document)) {
+                break;
+            }
+
             filterNode = filterNode.parentNode as HTMLElement;
         }
 

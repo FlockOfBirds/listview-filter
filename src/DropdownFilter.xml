@@ -13,7 +13,7 @@
         </property>
         <property key="filters" type="object" isList="true">
             <caption>Filters</caption>
-            <category>Filters</category>
+            <category>General</category>
             <description/>
             <properties>
                 <property key="caption" type="translatableString" required="false">

@@ -29,40 +29,33 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         super(props);
         // Should have state because select is a controlled component
         this.state = {
-            selectedValue : this.getSelectedIndex()
+            selectedValue : props.defaultFilterIndex < 0 ? "1" : `${props.defaultFilterIndex + 1}`
         };
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     render() {
         this.filters = this.applyFilter(this.props.filters);
-        return createElement("select", {
-            className: "form-control",
-            onChange: this.handleOnChange,
-            value: this.state.selectedValue
-        }, this.createOptions());
+        return createElement("select",
+            {
+                className: "form-control",
+                onChange: this.handleOnChange,
+                value: this.state.selectedValue
+            },
+            this.createOptions()
+        );
     }
 
     componentDidMount() {
         // initial state has selectedValue as defaultFilter's index
-        const selectedValue = this.getSelectedIndex();
-        const selectedFilter = this.filters.find(filter => filter.selectedValue === selectedValue);
-        this.props.handleChange(selectedFilter as FilterProps);
+        const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
+        this.props.handleChange(selectedFilter);
     }
 
     componentDidUpdate(_prevProps: DropdownFilterProps, prevState: DropdownFilterState) {
         if (prevState.selectedValue !== this.state.selectedValue) {
             const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
-            this.props.handleChange(selectedFilter as FilterProps);
-        }
-    }
-
-    private getSelectedIndex() {
-        if (this.props.defaultFilterIndex < 0) {
-            return "1";
-        }
-        if (this.props.defaultFilterIndex >= 0) {
-            return `${this.props.defaultFilterIndex + 1}`;
+            this.props.handleChange(selectedFilter);
         }
     }
 
