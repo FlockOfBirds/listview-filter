@@ -1,7 +1,7 @@
-import { ReactElement, createElement } from "react";
+import { createElement } from "react";
 import { shallow } from "enzyme";
 
-import { DropdownFilter, DropdownFilterProps, DropdownType } from "../DropdownFilter";
+import { DropdownFilter, DropdownFilterProps } from "../DropdownFilter";
 
 describe("DropdownFilter", () => {
     const renderDropdownFilter = (props: DropdownFilterProps) => shallow(createElement(DropdownFilter, props));
@@ -18,18 +18,14 @@ describe("DropdownFilter", () => {
         handleChange: jasmine.any(Function) as any
     };
 
-    const optionAttributes: DropdownType = {
-        className: "",
-        disabled: true,
-        key: "1",
-        label: "Select a filter",
-        value: "0"
+    const createOptions = (props: DropdownFilterProps) => {
+        return props.filters.map((option, index) => createElement("option", {
+            className: "",
+            key: index,
+            label: option.caption,
+            value: "1"
+        }, option.caption));
     };
-    const options: ReactElement<{}>[] = [
-        createElement("option", optionAttributes),
-        createElement("option", optionAttributes),
-        createElement("option", optionAttributes)
-     ];
 
     it("renders the structure correctly", () => {
         const dropdownFilter = renderDropdownFilter(dropdownFilterProps);
@@ -39,8 +35,8 @@ describe("DropdownFilter", () => {
                 className: "form-control",
                 onChange: jasmine.any(Function) as any,
                 value: "2"
-            }, options)
-            );
+            }, createOptions(dropdownFilterProps))
+        );
     });
 
     describe("select", () => {
