@@ -41,7 +41,7 @@ export interface ListView extends mxui.widget._WidgetBase {
     filter: {
         [key: string ]: HybridConstraint | string;
     };
-    update: () => void;
+    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
     _entity: string;
 }
 
@@ -110,10 +110,11 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
     }
 
     private handleChange(selectedFilter: FilterProps) {
-        const { targetListView } = this.state;
+        const { targetListView, targetNode } = this.state;
         // To support multiple filters. We attach each dropdown-filter-widget's selected constraint
         // On the listView's custom 'filter' object.
-        if (targetListView && targetListView._datasource) {
+        if (targetListView && targetListView._datasource && targetNode) {
+            this.showLoader(targetNode);
             const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
             if (filterBy === "XPath") {
                 targetListView.filter[this.props.friendlyId] = constraint;
@@ -127,7 +128,21 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
                 .map(key => targetListView.filter[key])
                 .join("");
             targetListView._datasource._constraints = finalConstraint;
-            targetListView.update();
+            targetListView.update(null, () => {
+                this.hideLoader(targetNode);
+            });
+        }
+    }
+
+    private showLoader(node?: HTMLElement) {
+        if (node) {
+            node.classList.add("widget-drop-down-filter-loading");
+        }
+    }
+
+    private hideLoader(node?: HTMLElement) {
+        if (node) {
+            node.classList.remove("widget-drop-down-filter-loading");
         }
     }
 

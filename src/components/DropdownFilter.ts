@@ -1,7 +1,7 @@
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
 import { FilterProps } from "./DropdownFilterContainer";
-import "./ui/DropdownFilter.css";
+import "./ui/DropdownFilter.scss";
 
 export interface DropdownFilterProps {
     defaultFilterIndex: number;

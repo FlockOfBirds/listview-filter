@@ -74,7 +74,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
 }
 
 export function getPreviewCss() {
-    return require("./components/ui/DropdownFilter.css");
+    return require("./components/ui/DropdownFilter.scss");
 }
 
 export function getVisibleProperties(valueMap: ContainerProps, visibilityMap: any) {
