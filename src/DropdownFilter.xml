@@ -12,7 +12,7 @@
             <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
         </property>
         <property key="filters" type="object" isList="true">
-            <caption>Filters</caption>
+            <caption>Filter options</caption>
             <category>General</category>
             <description/>
             <properties>
@@ -26,7 +26,7 @@
                     </translations>
                 </property>
                 <property key="filterBy" type="enumeration" defaultValue="none">
-                    <caption>Filter on</caption>
+                    <caption>Filter</caption>
                     <category>General</category>
                     <description/>
                     <enumerationValues>
@@ -35,7 +35,7 @@
                         <enumerationValue key="XPath">XPath</enumerationValue>
                     </enumerationValues>
                 </property>
-                <property key="attribute" type="attribute" required="false" entityProperty="../entity">
+                <property key="attribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="../entity">
                     <caption>Attribute</caption>
                     <category>General</category>
                     <description>The attribute on which the filter method is applied to</description>
