@@ -1,8 +1,8 @@
 {
-  "name": "dropdown-filter",
-  "widgetName": "DropdownFilter",
+  "name": "drop-down-filter",
+  "widgetName": "DropDownFilter",
   "version": "1.0.0",
-  "description": "Filter Mendix List views using a dropdown",
+  "description": "Filter Mendix List views using a drop-down",
   "copyright": "Mendix BV",
   "scripts": {
     "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec \"grunt",

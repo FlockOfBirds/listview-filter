@@ -1,4 +1,4 @@
-import { ContainerProps, ListView } from "../components/DropdownFilterContainer";
+import { ContainerProps, ListView } from "../components/DropDownFilterContainer";
 
 export const parseStyle = (style = ""): {[key: string]: string} => {
     try {
@@ -20,7 +20,7 @@ export const parseStyle = (style = ""): {[key: string]: string} => {
 
 export class Utils {
     static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean, isModeler?: boolean}): string {
-        const widgetName = "dropdown-filter";
+        const widgetName = "drop-down-filter";
         // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
         if (!props.filterNode) {
             return `${widgetName}: unable to find a listview with to attach to`;
@@ -72,8 +72,8 @@ export class Utils {
 
         while (!targetNode && filterNode) {
             targetNode = filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
-            if (targetNode || filterNode.classList.contains("mx-incubator")
-                || filterNode.classList.contains("mx-offscreen") || filterNode.isEqualNode(document)) {
+            if (targetNode || filterNode.isEqualNode(document) || filterNode.classList.contains("mx-incubator")
+                || filterNode.classList.contains("mx-offscreen")) {
                 break;
             }
 

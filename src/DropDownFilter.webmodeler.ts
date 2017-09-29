@@ -3,8 +3,8 @@ import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
 import { Alert } from "./components/Alert";
 
-import { DropdownFilter, DropdownFilterProps } from "./components/DropdownFilter";
-import { ContainerProps, ContainerState } from "./components/DropdownFilterContainer";
+import { DropDownFilter, DropDownFilterProps } from "./components/DropDownFilter";
+import { ContainerProps, ContainerState } from "./components/DropDownFilterContainer";
 import { Utils, parseStyle } from "./utils/ContainerUtils";
 
 // tslint:disable-next-line class-name
@@ -18,11 +18,11 @@ export class preview extends Component<ContainerProps, ContainerState> {
     render() {
         return createElement("div",
             {
-                className: classNames("widget-dropdown-filter", this.props.class),
+                className: classNames("widget-drop-down-filter", this.props.class),
                 style: parseStyle(this.props.style)
             },
             this.renderAlert(),
-            this.renderDropdownFilter()
+            this.renderDropDownFilter()
         );
     }
 
@@ -56,16 +56,16 @@ export class preview extends Component<ContainerProps, ContainerState> {
 
         return createElement(Alert, {
             bootstrapStyle: "danger",
-            className: "widget-dropdown-filter-alert",
+            className: "widget-drop-down-filter-alert",
             message: errorMessage
         });
     }
 
-    private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
+    private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
         const { filters } = this.props;
         const defaultFilterIndex = filters.indexOf(filters.filter(value => value.isDefault)[0]);
 
-        return createElement(DropdownFilter, {
+        return createElement(DropDownFilter, {
             defaultFilterIndex,
             filters: this.props.filters,
             handleChange: () => { return; }
@@ -74,7 +74,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
 }
 
 export function getPreviewCss() {
-    return require("./components/ui/DropdownFilter.scss");
+    return require("./components/ui/DropDownFilter.scss");
 }
 
 export function getVisibleProperties(valueMap: ContainerProps, visibilityMap: any) {

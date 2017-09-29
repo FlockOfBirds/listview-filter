@@ -1,31 +1,31 @@
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
-import { FilterProps } from "./DropdownFilterContainer";
-import "./ui/DropdownFilter.scss";
+import { FilterProps } from "./DropDownFilterContainer";
+import "./ui/DropDownFilter.scss";
 
-export interface DropdownFilterProps {
+export interface DropDownFilterProps {
     defaultFilterIndex: number;
     filters: FilterProps[];
     handleChange: (FilterProps) => void;
 }
 
-interface DropdownFilterState {
+interface DropDownFilterState {
     selectedValue: string;
 }
 // Added to deal with typings issue of componentClass, needing to pass a className attribute on select options
-export interface DropdownType extends OptionHTMLAttributes<HTMLOptionElement> {
+export interface DropDownType extends OptionHTMLAttributes<HTMLOptionElement> {
     key: string;
     value: string;
     label: string;
 }
 
-type Display = Partial<FilterProps> & DropdownFilterState;
+type Display = Partial<FilterProps> & DropDownFilterState;
 
-export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilterState> {
+export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilterState> {
     // Remap prop filters to dropdownfilters
     private filters: Display[];
 
-    constructor(props: DropdownFilterProps) {
+    constructor(props: DropDownFilterProps) {
         super(props);
         // Should have state because select is a controlled component
         this.state = {
@@ -52,7 +52,7 @@ export class DropdownFilter extends Component<DropdownFilterProps, DropdownFilte
         this.props.handleChange(selectedFilter);
     }
 
-    componentDidUpdate(_prevProps: DropdownFilterProps, prevState: DropdownFilterState) {
+    componentDidUpdate(_prevProps: DropDownFilterProps, prevState: DropDownFilterState) {
         if (prevState.selectedValue !== this.state.selectedValue) {
             const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
             this.props.handleChange(selectedFilter);

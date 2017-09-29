@@ -1,6 +1,6 @@
 class DefaultFilter {
 
-    public get dropdownFilter() { return browser.element(".mx-name-dropdownFilter1"); }
+    public get dropDownFilter() { return browser.element(".mx-name-dropdownFilter1"); }
 
     public get listViewList() { return browser.elements(".mx-name-listView0"); }
 

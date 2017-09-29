@@ -3,8 +3,8 @@
 [![Dev Dependency Status](https://david-dm.org/mendixlabs/listview-filter.svg#info=devDependencies)](https://david-dm.org/mendixlabs/listview-filter#info=devDependencies)
 [![codecov](https://codecov.io/gh/mendixlabs/listview-filter/branch/master/graph/badge.svg)](https://codecov.io/gh/mendixlabs/listview-filter)
 
-# Dropdown filter
-Filter mendix list views using a dropdown
+# Drop-down filter
+Filter mendix list views using a drop-down
 
 ## Features
 * Filter items by an attribute
@@ -17,6 +17,8 @@ Mendix 7.6
 
 ## Demo project
 [https://dropdownfilter.mxapps.io/](https://dropdownfilter.mxapps.io/)
+
+![Demo](assets/Demo.gif)
 
 ## Usage
 The list view entity in the `Data source` tab is a required property.

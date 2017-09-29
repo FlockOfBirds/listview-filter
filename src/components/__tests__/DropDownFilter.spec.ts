@@ -1,11 +1,11 @@
 import { createElement } from "react";
 import { shallow } from "enzyme";
 
-import { DropdownFilter, DropdownFilterProps } from "../DropdownFilter";
+import { DropDownFilter, DropDownFilterProps } from "../DropDownFilter";
 
-describe("DropdownFilter", () => {
-    const renderDropdownFilter = (props: DropdownFilterProps) => shallow(createElement(DropdownFilter, props));
-    const dropdownFilterProps: DropdownFilterProps = {
+describe("DropDownFilter", () => {
+    const renderDropDownFilter = (props: DropDownFilterProps) => shallow(createElement(DropDownFilter, props));
+    const dropDownFilterProps: DropDownFilterProps = {
         defaultFilterIndex: 1,
         filters: [ {
             attribute: "Code",
@@ -18,7 +18,7 @@ describe("DropdownFilter", () => {
         handleChange: jasmine.any(Function) as any
     };
 
-    const createOptions = (props: DropdownFilterProps) => {
+    const createOptions = (props: DropDownFilterProps) => {
         return props.filters.map((option, index) => createElement("option", {
             className: "",
             key: index,
@@ -28,20 +28,20 @@ describe("DropdownFilter", () => {
     };
 
     it("renders the structure correctly", () => {
-        const dropdownFilter = renderDropdownFilter(dropdownFilterProps);
+        const dropDownFilter = renderDropDownFilter(dropDownFilterProps);
 
-        expect(dropdownFilter).toBeElement(
+        expect(dropDownFilter).toBeElement(
             createElement("select", {
                 className: "form-control",
                 onChange: jasmine.any(Function) as any,
                 value: "2"
-            }, createOptions(dropdownFilterProps))
+            }, createOptions(dropDownFilterProps))
         );
     });
 
     describe("select", () => {
         it("changes value", (done) => {
-            const props: DropdownFilterProps = {
+            const props: DropDownFilterProps = {
                 defaultFilterIndex: 1,
                 filters: [ {
                     attribute: "Code",
@@ -53,7 +53,7 @@ describe("DropdownFilter", () => {
                 } ],
                 handleChange: jasmine.createSpy("onClick")
             };
-            const wrapper = renderDropdownFilter(props);
+            const wrapper = renderDropDownFilter(props);
             const select: any = wrapper.find("select");
 
             select.simulate("change", {
@@ -73,7 +73,7 @@ describe("DropdownFilter", () => {
 
         it("updates when the select option changes", (done) => {
             const newValue = "Uganda";
-            const props: DropdownFilterProps = {
+            const props: DropDownFilterProps = {
                 defaultFilterIndex: 1,
                 filters: [ {
                     attribute: "Code",
@@ -86,7 +86,7 @@ describe("DropdownFilter", () => {
                 handleChange: value => value
             };
             spyOn(props, "handleChange").and.callThrough();
-            const wrapper = renderDropdownFilter(props);
+            const wrapper = renderDropDownFilter(props);
             const select: any = wrapper.find("select");
 
             select.simulate("change", {

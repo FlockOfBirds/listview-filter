@@ -2,7 +2,7 @@ import { Component, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 
 import { Alert } from "./Alert";
-import { DropdownFilter, DropdownFilterProps } from "./DropdownFilter";
+import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 import { Utils, parseStyle } from "../utils/ContainerUtils";
 
 import * as classNames from "classnames";
@@ -52,8 +52,7 @@ export interface ContainerState {
     validationPassed?: boolean;
 }
 
-export default class DropdownFilterContainer extends Component<ContainerProps, ContainerState> {
-
+export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     constructor(props: ContainerProps) {
         super(props);
 
@@ -67,11 +66,11 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
     render() {
         return createElement("div",
             {
-                className: classNames("widget-dropdown-filter", this.props.class),
+                className: classNames("widget-drop-down-filter oh", this.props.class),
                 style: parseStyle(this.props.style)
             },
             this.renderAlert(),
-            this.renderDropdownFilter()
+            this.renderDropDownFilter()
         );
     }
 
@@ -85,12 +84,12 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
         return createElement(Alert, {
             bootstrapStyle: "danger",
-            className: "widget-dropdown-filter-alert",
+            className: "widget-drop-down-filter-alert",
             message: errorMessage
         });
     }
 
-    private renderDropdownFilter(): ReactElement<DropdownFilterProps> {
+    private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
         if (this.state.validationPassed) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
             if (this.props.mxObject) {
@@ -99,7 +98,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
                 ));
             }
 
-            return createElement(DropdownFilter, {
+            return createElement(DropDownFilter, {
                 defaultFilterIndex,
                 filters: this.props.filters,
                 handleChange: this.handleChange
@@ -111,7 +110,7 @@ export default class DropdownFilterContainer extends Component<ContainerProps, C
 
     private handleChange(selectedFilter: FilterProps) {
         const { targetListView, targetNode } = this.state;
-        // To support multiple filters. We attach each dropdown-filter-widget's selected constraint
+        // To support multiple filters. We attach each drop-down-filter-widget's selected constraint
         // On the listView's custom 'filter' object.
         if (targetListView && targetListView._datasource && targetNode) {
             this.showLoader(targetNode);
