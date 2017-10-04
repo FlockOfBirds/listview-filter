@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/mendixlabs/listview-filter/branch/master/graph/badge.svg)](https://codecov.io/gh/mendixlabs/listview-filter)
 
 # Drop-down filter
-Filter mendix list views using a drop-down
+Enable users to filter a list view at run time, with various options that can be selected from a drop-down
 
 ## Features
 * Filter items by an attribute
@@ -21,9 +21,10 @@ Mendix 7.6
 ![Demo](assets/Demo.gif)
 
 ## Usage
-The list view entity in the `Data source` tab is a required property.
+Place the Drop-down filter widget above a list view.
+Provide the entity name of the target list view in the `General` tab.
 
-![Data source](assets/Datasource.png)
+![General](assets/General.png)
 
 Add a new filter with a caption and choose comparison type.
 
@@ -31,8 +32,12 @@ Add a new filter with a caption and choose comparison type.
 
 When filtering by `Attribute`, select an attribute and input a value to filter by
 When filtering by `XPath`, input a constraint to filter by.
+`None` is for an empty option which resets the filter then selected.
 
-![Constraint](assets/Constraint.png)
+**NB: The `None` filter option should always appear at the top of the list and it does not require a caption.** 
+**Also to note, only one empty filter option should be selected.**
+
+![XPathConstraint](assets/XPathConstraint.png)
 
 ## Issues, suggestions and feature requests
 Please report issues at [https://github.com/mendixlabs/listview-filter/issues](https://github.com/mendixlabs/listview-filter/issues).
