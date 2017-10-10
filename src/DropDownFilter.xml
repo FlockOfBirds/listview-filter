@@ -9,7 +9,7 @@
         <property key="entity" type="entity">
             <caption> List view with entity</caption>
             <category>General</category>
-            <description>Entity whose attributes will be filtered. This entity should match the list view entity</description>
+            <description/>
         </property>
         <property key="filters" type="object" isList="true">
             <caption>Filter options</caption>
