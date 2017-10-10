@@ -66,7 +66,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     render() {
         return createElement("div",
             {
-                className: classNames("widget-drop-down-filter oh", this.props.class),
+                className: classNames("widget-drop-down-filter", this.props.class),
                 style: parseStyle(this.props.style)
             },
             this.renderAlert(),
