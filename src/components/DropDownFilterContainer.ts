@@ -172,26 +172,4 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             }
         }
     }
-
-    // private connectToListView() {
-    //     const filterNode = findDOMNode(this).parentNode as HTMLElement;
-    //     const targetNode = Utils.findTargetNode(filterNode);
-    //     let targetListView: ListView | null = null;
-
-    //     if (targetNode) {//
-    //         this.setState({ targetNode }); //
-    //         targetListView = dijitRegistry.byNode(targetNode); //
-    //         if (targetListView) { //
-    //             targetListView.filter = {}; //
-    //             this.setState({ targetListView }); //
-    //         }
-    //     }
-    //     const validateMessage = Utils.validate({
-    //         ...this.props as ContainerProps,
-    //         filterNode: targetNode,
-    //         targetListView,
-    //         validate: true
-    //     });
-    //     this.setState({ listviewAvailable: false, validationPassed: !validateMessage });
-    // }
 }
