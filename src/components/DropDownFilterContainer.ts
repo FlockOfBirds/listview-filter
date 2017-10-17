@@ -43,15 +43,13 @@ export interface ListView extends mxui.widget._WidgetBase {
     datasource: {
         type: "microflow" | "entityPath" | "database" | "xpath";
     };
-    filter: {
-        [key: string ]: HybridConstraint | string;
-    };
     update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
     _entity: string;
     __customWidgetDataSourceHelper: DataSourceHelper;
 }
 
 export interface ContainerState {
+    alertMessage?: string;
     listviewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
@@ -60,7 +58,7 @@ export interface ContainerState {
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private errorMessage: string;
+    private alertMessage: string;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -84,7 +82,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     private renderAlert() {
-        this.errorMessage = Utils.validate({
+        this.alertMessage = Utils.validate({
             ...this.props as ContainerProps,
             filterNode: this.state.targetNode,
             targetListView: this.state.targetListView,
@@ -94,7 +92,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-drop-down-filter-alert",
-            message: this.errorMessage
+            message: this.alertMessage
         });
     }
 
@@ -117,33 +115,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return null;
     }
 
-    // private handleChange(selectedFilter: FilterProps) {
-    //     const { targetListView, targetNode } = this.state;
-    //     // To support multiple filters. We attach each drop-down-filter-widget's selected constraint
-    //     // On the listView's custom 'filter' object.
-    //     if (targetListView && targetListView._datasource && targetNode) {
-    //         this.showLoader(targetNode);
-    //         const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
-    //         if (filterBy === "XPath") {
-    //             targetListView.filter[this.props.friendlyId] = constraint;
-    //         } else if (filterBy === "attribute") {
-    //             targetListView.filter[this.props.friendlyId] = `[contains(${attribute},'${attributeValue}')]`;
-    //         } else {
-    //             targetListView.filter[this.props.friendlyId] = "";
-    //         }
-    //         // Combine multiple-filter constraints into one and apply it to the listview
-    //         const finalConstraint = Object.keys(targetListView.filter)
-    //             .map(key => targetListView.filter[key])
-    //             .join("");
-    //         targetListView._datasource._constraints = finalConstraint;
-    //         targetListView.update(null, () => {
-    //             this.hideLoader(targetNode);
-    //         });
-    //     }
-    // }
-
     private applyFilter(selectedFilter: FilterProps) {
-        // construct constraint based on checked
         const constraint = this.getConstraint(selectedFilter);
         if (this.dataSourceHelper)
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
@@ -175,10 +147,12 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
                     try {
                         targetListView.__customWidgetDataSourceHelper = new DataSourceHelper(targetListView);
                     } catch (error) {
-                        console.log("failed to instantiate DataSourceHelper \n" + error); // tslint:disable-line
+                        this.setState({
+                            alertMessage: error.message
+                        });
                     }
                 } else if (!DataSourceHelper.checkVersionCompatible(targetListView.__customWidgetDataSourceHelper.version)) {
-                    console.log("Compartibility issue"); // tslint:disable-line
+                    this.alertMessage = "DataSource compatibility issue";
                 }
                 this.dataSourceHelper = targetListView.__customWidgetDataSourceHelper;
 
@@ -189,6 +163,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
                     validate: true
                 });
                 this.setState({
+                    alertMessage: validateMessage || this.alertMessage,
                     listviewAvailable: !!targetListView,
                     targetListView,
                     targetNode,

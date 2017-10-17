@@ -1,7 +1,6 @@
 import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
 
 import { FilterProps } from "./DropDownFilterContainer";
-import "./ui/DropDownFilter.scss";
 
 export interface DropDownFilterProps {
     defaultFilterIndex: number;
@@ -29,13 +28,17 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
         super(props);
         // Should have state because select is a controlled component
         this.state = {
-            selectedValue : props.defaultFilterIndex < 0 ? "1" : `${props.defaultFilterIndex + 1}`
+            selectedValue : props.defaultFilterIndex < 0 ? "0" : `${props.defaultFilterIndex}`
         };
         this.handleOnChange = this.handleOnChange.bind(this);
+
+        this.filters = this.props.filters.map((filter, index) => ({
+            ...filter,
+            selectedValue: `${index}`
+        }));
     }
 
     render() {
-        this.filters = this.applyFilter(this.props.filters);
         return createElement("select",
             {
                 className: "form-control",
@@ -66,18 +69,6 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
             label: option.caption,
             value: option.selectedValue
         }, option.caption));
-    }
-
-    private applyFilter(filters: FilterProps[]): Display[] {
-        const returnFilters: Display[] = [];
-        // Remap prop filters to dropdownfilters
-        filters.forEach((filter, index) => {
-            returnFilters.push({
-                ...filter,
-                selectedValue: `${index + 1}`
-            });
-        });
-        return returnFilters;
     }
 
     private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
