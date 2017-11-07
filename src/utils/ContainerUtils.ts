@@ -1,4 +1,5 @@
-import { ContainerProps, ListView } from "../components/DropDownFilterContainer";
+import { ContainerProps } from "../components/DropDownFilterContainer";
+import { ListView } from "mendix-data-source-helper";
 
 export const parseStyle = (style = ""): {[key: string]: string} => {
     try {

@@ -4,7 +4,7 @@ import { findDOMNode } from "react-dom";
 import { Alert } from "./Alert";
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 import { Utils, parseStyle } from "../utils/ContainerUtils";
-import { DataSourceHelper } from "../utils/DataSourceHelper/DataSourceHelper";
+import { DataSourceHelper, ListView } from "mendix-data-source-helper";
 
 import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
@@ -33,27 +33,12 @@ export interface FilterProps {
 }
 
 export type filterOptions = "none" | "attribute" | "XPath";
-type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
-
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        _constraints: HybridConstraint | string;
-        _pageObjs: mendix.lib.MxObject[];
-    };
-    datasource: {
-        type: "microflow" | "entityPath" | "database" | "xpath";
-    };
-    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
-    _entity: string;
-    __customWidgetDataSourceHelper: DataSourceHelper;
-}
 
 export interface ContainerState {
     alertMessage?: string;
     listviewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
-    validationPassed?: boolean;
 }
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
@@ -70,7 +55,20 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView);
     }
 
+    componentDidMount() {
+        const filterNode = findDOMNode(this).parentNode as HTMLElement;
+        const targetNode = Utils.findTargetNode(filterNode);
+        DataSourceHelper.hideContent(targetNode);
+    }
+
     render() {
+        this.alertMessage = Utils.validate({
+            ...this.props as ContainerProps,
+            filterNode: this.state.targetNode,
+            targetListView: this.state.targetListView,
+            validate: !this.state.listviewAvailable
+        }) || this.alertMessage || "";
+
         return createElement("div",
             {
                 className: classNames("widget-drop-down-filter", this.props.class),
@@ -82,13 +80,6 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     private renderAlert() {
-        this.alertMessage = Utils.validate({
-            ...this.props as ContainerProps,
-            filterNode: this.state.targetNode,
-            targetListView: this.state.targetListView,
-            validate: !this.state.listviewAvailable
-        });
-
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-drop-down-filter-alert",
@@ -97,7 +88,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
-        if (this.state.validationPassed) {
+        if (!this.alertMessage) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
             if (this.props.mxObject) {
             this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(`'[%CurrentObject%]'`,
@@ -139,35 +130,28 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
         const targetNode = Utils.findTargetNode(filterNode);
         let targetListView: ListView | null = null;
+        let errorMessage = "";
 
         if (targetNode) {
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
-                if (!targetListView.__customWidgetDataSourceHelper) {
-                    try {
-                        targetListView.__customWidgetDataSourceHelper = new DataSourceHelper(targetListView);
-                    } catch (error) {
-                        this.setState({
-                            alertMessage: error.message
-                        });
-                    }
-                } else if (!DataSourceHelper.checkVersionCompatible(targetListView.__customWidgetDataSourceHelper.version)) {
-                    this.alertMessage = "DataSource compatibility issue";
+                try {
+                    this.dataSourceHelper = new DataSourceHelper(targetNode, targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
+                } catch (error) {
+                    errorMessage = error.message;
                 }
-                this.dataSourceHelper = targetListView.__customWidgetDataSourceHelper;
-
-                const validateMessage = Utils.validate({
+                const validationMessage = Utils.validate({
                     ...this.props as ContainerProps,
                     filterNode: targetNode,
                     targetListView,
                     validate: true
                 });
+
                 this.setState({
-                    alertMessage: validateMessage || this.alertMessage,
+                    alertMessage: validationMessage || errorMessage,
                     listviewAvailable: !!targetListView,
                     targetListView,
-                    targetNode,
-                    validationPassed: !validateMessage
+                    targetNode
                 });
             }
         }
