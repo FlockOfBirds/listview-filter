@@ -23,7 +23,7 @@ describe("DropDownFilter", () => {
             className: "",
             key: index,
             label: option.caption,
-            value: "1"
+            value: `${index}`
         }, option.caption));
     };
 
@@ -34,7 +34,7 @@ describe("DropDownFilter", () => {
             createElement("select", {
                 className: "form-control",
                 onChange: jasmine.any(Function) as any,
-                value: "2"
+                value: "1"
             }, createOptions(dropDownFilterProps))
         );
     });

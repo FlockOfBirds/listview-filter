@@ -42,22 +42,18 @@ export class preview extends Component<ContainerProps, ContainerState> {
         if (targetNode) {
             this.setState({ targetNode });
         }
-        this.setState({ listviewAvailable: true });
+        this.setState({ listviewAvailable: true, targetNode });
     }
 
     private renderAlert() {
-        const errorMessage = Utils.validate({
-            ...this.props as ContainerProps,
-            filterNode: this.state.targetNode,
-            isModeler: true,
-            targetListView: this.state.targetListView,
-            validate: !this.state.listviewAvailable
+        const message = Utils.validateProps({
+            ...this.props as ContainerProps
         });
 
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-drop-down-filter-alert",
-            message: errorMessage
+            message
         });
     }
 
@@ -71,10 +67,6 @@ export class preview extends Component<ContainerProps, ContainerState> {
             handleChange: () => { return; }
         });
     }
-}
-
-export function getPreviewCss() {
-    return require("./components/ui/DropDownFilter.scss");
 }
 
 export function getVisibleProperties(valueMap: ContainerProps, visibilityMap: any) {

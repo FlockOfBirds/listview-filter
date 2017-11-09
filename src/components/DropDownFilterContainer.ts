@@ -4,6 +4,7 @@ import { findDOMNode } from "react-dom";
 import { Alert } from "./Alert";
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 import { Utils, parseStyle } from "../utils/ContainerUtils";
+import { DataSourceHelper, ListView } from "mendix-data-source-helper";
 
 import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
@@ -32,41 +33,39 @@ export interface FilterProps {
 }
 
 export type filterOptions = "none" | "attribute" | "XPath";
-type HybridConstraint = Array<{ attribute: string; operator: string; value: string; path?: string; }>;
-
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        _constraints: HybridConstraint | string;
-    };
-    filter: {
-        [key: string ]: HybridConstraint | string;
-    };
-    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
-    _entity: string;
-}
 
 export interface ContainerState {
+    alertMessage?: string;
     listviewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
-    validationPassed?: boolean;
 }
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
+    private dataSourceHelper: DataSourceHelper;
+
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listviewAvailable: true };
-        this.handleChange = this.handleChange.bind(this);
+        this.state = { listviewAvailable: false, alertMessage: Utils.validateProps(this.props) };
+        this.applyFilter = this.applyFilter.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
         this.connectToListView = this.connectToListView.bind(this);
         dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView);
     }
 
+    componentDidMount() {
+        const filterNode = findDOMNode(this).parentNode as HTMLElement;
+        const targetNode = Utils.findTargetNode(filterNode);
+        if (targetNode) {
+            DataSourceHelper.hideContent(targetNode);
+        }
+    }
+
     render() {
         return createElement("div",
             {
-                className: classNames("widget-drop-down-filter oh", this.props.class),
+                className: classNames("widget-drop-down-filter", this.props.class),
                 style: parseStyle(this.props.style)
             },
             this.renderAlert(),
@@ -74,23 +73,24 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         );
     }
 
-    private renderAlert() {
-        const errorMessage = Utils.validate({
-            ...this.props as ContainerProps,
-            filterNode: this.state.targetNode,
-            targetListView: this.state.targetListView,
-            validate: !this.state.listviewAvailable
-        });
+    componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
+        if (this.state.listviewAvailable
+                && (!prevState.listviewAvailable || prevProps.mxObject !== this.props.mxObject)) {
+            const selectedFilter = this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
+            this.applyFilter(selectedFilter);
+        }
+    }
 
+    private renderAlert() {
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-drop-down-filter-alert",
-            message: errorMessage
+            message: this.state.alertMessage
         });
     }
 
     private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
-        if (this.state.validationPassed) {
+        if (!this.state.alertMessage) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
             if (this.props.mxObject) {
             this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(`'[%CurrentObject%]'`,
@@ -101,47 +101,30 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             return createElement(DropDownFilter, {
                 defaultFilterIndex,
                 filters: this.props.filters,
-                handleChange: this.handleChange
+                handleChange: this.applyFilter
             });
         }
 
         return null;
     }
 
-    private handleChange(selectedFilter: FilterProps) {
-        const { targetListView, targetNode } = this.state;
-        // To support multiple filters. We attach each drop-down-filter-widget's selected constraint
-        // On the listView's custom 'filter' object.
-        if (targetListView && targetListView._datasource && targetNode) {
-            this.showLoader(targetNode);
+    private applyFilter(selectedFilter: FilterProps) {
+        const constraint = this.getConstraint(selectedFilter);
+        if (this.dataSourceHelper)
+            this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
+    }
+
+    private getConstraint(selectedFilter: FilterProps) {
+        const { targetListView } = this.state;
+        if (targetListView && targetListView._datasource) {
             const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
             if (filterBy === "XPath") {
-                targetListView.filter[this.props.friendlyId] = constraint;
+                return constraint;
             } else if (filterBy === "attribute") {
-                targetListView.filter[this.props.friendlyId] = `[contains(${attribute},'${attributeValue}')]`;
+                return `[contains(${attribute},'${attributeValue}')]`;
             } else {
-                targetListView.filter[this.props.friendlyId] = "";
+                return "";
             }
-            // Combine multiple-filter constraints into one and apply it to the listview
-            const finalConstraint = Object.keys(targetListView.filter)
-                .map(key => targetListView.filter[key])
-                .join("");
-            targetListView._datasource._constraints = finalConstraint;
-            targetListView.update(null, () => {
-                this.hideLoader(targetNode);
-            });
-        }
-    }
-
-    private showLoader(node?: HTMLElement) {
-        if (node) {
-            node.classList.add("widget-drop-down-filter-loading");
-        }
-    }
-
-    private hideLoader(node?: HTMLElement) {
-        if (node) {
-            node.classList.remove("widget-drop-down-filter-loading");
         }
     }
 
@@ -149,21 +132,29 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
         const targetNode = Utils.findTargetNode(filterNode);
         let targetListView: ListView | null = null;
+        let errorMessage = "";
 
         if (targetNode) {
-            this.setState({ targetNode });
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
-                targetListView.filter = {};
-                this.setState({ targetListView });
+                try {
+                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
+                } catch (error) {
+                    errorMessage = error.message;
+                }
             }
         }
-        const validateMessage = Utils.validate({
+
+        const validationMessage = Utils.validateCompatibility({
             ...this.props as ContainerProps,
-            filterNode: targetNode,
-            targetListView,
-            validate: true
+            targetListView
         });
-        this.setState({ listviewAvailable: false, validationPassed: !validateMessage });
+
+        this.setState({
+            alertMessage: validationMessage || errorMessage,
+            listviewAvailable: !!targetListView,
+            targetListView,
+            targetNode
+        });
     }
 }

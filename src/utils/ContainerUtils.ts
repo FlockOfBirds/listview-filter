@@ -1,4 +1,5 @@
-import { ContainerProps, ListView } from "../components/DropDownFilterContainer";
+import { ContainerProps } from "../components/DropDownFilterContainer";
+import { ListView } from "mendix-data-source-helper";
 
 export const parseStyle = (style = ""): {[key: string]: string} => {
     try {
@@ -19,24 +20,8 @@ export const parseStyle = (style = ""): {[key: string]: string} => {
 };
 
 export class Utils {
-    static validate(props: ContainerProps & { filterNode: HTMLElement; targetListView: ListView; validate: boolean, isModeler?: boolean}): string {
-        const widgetName = "drop-down-filter";
-        // validate filter values if filterby = attribute, then value should not be empty or "" or " ".
-        if (!props.filterNode) {
-            return `${widgetName}: unable to find a listview with to attach to`;
-        }
-
-        if (props.isModeler) {
-            return "";
-        } else if (!(props.targetListView && props.targetListView._datasource)) {
-            return `${widgetName}: unable to find a listview with to attach to`;
-        }
-
-        if (props.entity && !Utils.itContains(props.entity, "/")) {
-            if (props.entity !== props.targetListView._entity) {
-                return `${widgetName}: supplied entity "${props.entity}" does not belong to list view data source`;
-            }
-        }
+    static validateProps(props: ContainerProps): string {
+        const widgetName = props.friendlyId;
 
         if (props.filters && !props.filters.length) {
             return `${widgetName}: should have at least one filter`;
@@ -63,8 +48,17 @@ export class Utils {
         return "";
     }
 
-    static isCompatible(targetListView: ListView): boolean {
-        return !!(targetListView && targetListView._datasource);
+    static validateCompatibility(props: ContainerProps & { targetListView: ListView }): string {
+        const widgetName = props.friendlyId;
+        if (!(props.targetListView && props.targetListView._datasource)) {
+            return `${widgetName}: Unable to find a listview with to attach to`;
+        }
+        if (props.entity && !Utils.itContains(props.entity, "/")) {
+            if (props.entity !== props.targetListView._entity) {
+                return `${widgetName}: supplied entity "${props.entity}" does not belong to list view data source`;
+            }
+        }
+        return "";
     }
 
     static findTargetNode(filterNode: HTMLElement): HTMLElement | null {
