@@ -47,7 +47,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listviewAvailable: true, alertMessage: Utils.validateProps(this.props) };
+        this.state = { listviewAvailable: false, alertMessage: Utils.validateProps(this.props) };
         this.applyFilter = this.applyFilter.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
         this.connectToListView = this.connectToListView.bind(this);
@@ -71,6 +71,14 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             this.renderAlert(),
             this.renderDropDownFilter()
         );
+    }
+
+    componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
+        if (this.state.listviewAvailable
+                && (!prevState.listviewAvailable || prevProps.mxObject !== this.props.mxObject)) {
+            const selectedFilter = this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
+            this.applyFilter(selectedFilter);
+        }
     }
 
     private renderAlert() {
@@ -130,7 +138,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 try {
-                    this.dataSourceHelper = new DataSourceHelper(targetNode, targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
+                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
                 } catch (error) {
                     errorMessage = error.message;
                 }

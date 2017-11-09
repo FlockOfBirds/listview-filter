@@ -26,7 +26,7 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
 
     constructor(props: DropDownFilterProps) {
         super(props);
-        // Should have state because select is a controlled component
+
         this.state = {
             selectedValue : props.defaultFilterIndex < 0 ? "0" : `${props.defaultFilterIndex}`
         };
@@ -49,16 +49,10 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
         );
     }
 
-    componentDidMount() {
-        // initial state has selectedValue as defaultFilter's index
-        const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
-        this.props.handleChange(selectedFilter);
-    }
-
-    componentDidUpdate(_prevProps: DropDownFilterProps, prevState: DropDownFilterState) {
-        if (prevState.selectedValue !== this.state.selectedValue) {
-            const selectedFilter = this.filters.find(filter => filter.selectedValue === this.state.selectedValue);
-            this.props.handleChange(selectedFilter);
+    componentWillReceiveProps(newProps: DropDownFilterProps) {
+        const selectedValue = newProps.defaultFilterIndex < 0 ? "0" : `${newProps.defaultFilterIndex}`;
+        if (this.state.selectedValue !== selectedValue) {
+            this.setState({ selectedValue });
         }
     }
 
@@ -75,5 +69,7 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
         this.setState({
             selectedValue: event.currentTarget.value
         });
+        const selectedFilter = this.filters.find(filter => filter.selectedValue === event.currentTarget.value);
+        this.props.handleChange(selectedFilter);
     }
 }
