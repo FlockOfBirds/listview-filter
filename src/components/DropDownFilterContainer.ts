@@ -53,14 +53,14 @@ export interface ContainerState {
 }
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
+    private navigationHandler: object;
     constructor(props: ContainerProps) {
         super(props);
 
         this.state = { listviewAvailable: true };
         this.handleChange = this.handleChange.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
-        this.connectToListView = this.connectToListView.bind(this);
-        dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView);
+        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }
 
     render() {
@@ -72,6 +72,10 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             this.renderAlert(),
             this.renderDropDownFilter()
         );
+    }
+
+    componentWillUnmount() {
+        dojoConnect.disconnect(this.navigationHandler);
     }
 
     private renderAlert() {
