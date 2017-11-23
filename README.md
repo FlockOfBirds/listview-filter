@@ -13,7 +13,7 @@ Enable users to filter a list view at run time, with various options that can be
 * Set a default filter option
 
 ## Dependencies
-Mendix 7.6
+Mendix 7.8
 
 ## Demo project
 [https://dropdownfilter.mxapps.io/](https://dropdownfilter.mxapps.io/)

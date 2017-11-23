@@ -15,8 +15,8 @@ exports.config = {
     bail: 0,
     screenshotPath: "dist/wdio/",
     baseUrl: debug ? "http://localhost:8080/" : "https://dropdownfilter.mxapps.io/",
-    waitforTimeout: 10000,
-    connectionRetryTimeout: 90000,
+    waitforTimeout: 100000,
+    connectionRetryTimeout: 200000,
     connectionRetryCount: 0,
     services: [ "selenium-standalone" ],
 
@@ -25,7 +25,7 @@ exports.config = {
     execArgv: debug ? [ "--inspect" ] : undefined,
     // Options to be passed to Jasmine.
     jasmineNodeOpts: {
-        defaultTimeoutInterval: debug ? (60 * 60 * 1000) : (10 * 1000),
+        defaultTimeoutInterval: debug ? (60 * 60 * 1000) : (100 * 1000),
         expectationResultHandler: function(passed, assertion) {
             if (passed) {
                 return;
